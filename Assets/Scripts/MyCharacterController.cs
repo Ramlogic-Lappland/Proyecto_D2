@@ -62,9 +62,10 @@ public class CharacterController : MonoBehaviour
     private void Update()
     {
         _isGrounded = Physics.Raycast
-        ( transform.position,
-            Vector3.down,
-            groundDistanceCheck,
+        (
+            transform.position,
+            Vector3.down   ,
+            groundDistanceCheck    ,
             groundLayer
         );
 
@@ -86,13 +87,15 @@ public class CharacterController : MonoBehaviour
         
         rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
 
-        if (_isGrounded)
+        
             if (_isJumpRequested)
             {
+                if (_isGrounded)
+                {
+                    rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                }
                 _isJumpRequested = false;
-                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             } 
-        
     }
     
     private void OnJump (InputAction.CallbackContext context) // handles jump
@@ -108,8 +111,8 @@ public class CharacterController : MonoBehaviour
 
     private void OnRun(InputAction.CallbackContext context) // handles run
     {
-        Debug.Log(message:context.ReadValue<Vector2>());
-        _moveInput = context.ReadValue<Vector2>();
+        _isRunning = context.ReadValueAsButton();
+        Debug.Log("Sprint: " + _isRunning);
     }
     
 
