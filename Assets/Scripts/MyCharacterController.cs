@@ -12,14 +12,16 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float walkSpeed = 10f;
     [SerializeField] private float runSpeed = 25f;
     [SerializeField] private float jumpForce = 5f;
-    
+    [SerializeField] private float groundDistanceCheck = 0.4f;
+    [SerializeField] private float airControlMultiplier = 0.5f;
+    [SerializeField] private LayerMask groundLayer;
     
     [SerializeField] private new Rigidbody rigidbody;
     //private Rigidbody rb;
     private Vector2 _moveInput;
     private Vector2 _velocity;
     
-    private bool _isRunRequested;
+    private bool _isRuning;
     private bool _isJumpRequested; 
     private bool _isGrounded;
 
@@ -54,17 +56,47 @@ public class CharacterController : MonoBehaviour
         runAction.action.performed -= OnRun;
         runAction.action.canceled -= OnRun;
         
-        jumpAction.action.performed -= OnJump;
+        jumpAction.action.started -= OnJump;
+    }
+    
+    private void Update()
+    {
+        _isGrounded = Physics.Raycast
+        ( transform.position,
+            Vector3.down,
+            groundDistanceCheck,
+            groundLayer
+        );
+
     }
     
     private void FixedUpdate()
     {
-        rigidbody.AddForce(new Vector3(_moveInput.x, 0, _moveInput.y) * walkSpeed , ForceMode.Force);
-        if (_isJumpRequested)
-        {
-            _isJumpRequested = false;
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        }
+        CharacterMovement();
+    }
+
+    private void CharacterMovement()
+    {
+        float targetSpeed = _isRuning ? runSpeed : walkSpeed;
+        
+        Vector3 moveDirection = (transform.right * _moveInput.x + transform.forward * _moveInput.y).normalized;
+
+        if (!_isGrounded)
+            moveDirection *= airControlMultiplier; 
+        
+        rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
+
+        if (_isGrounded)
+            if (_isJumpRequested)
+            {
+                _isJumpRequested = false;
+                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            } 
+        
+        /*
+        rigidbody.AddForce(new Vector3(_moveInput.x, 0, _moveInput.y) * targetSpeed , ForceMode.Force);
+        */
+
     }
     
     private void OnJump (InputAction.CallbackContext context) // handles jump
