@@ -21,7 +21,7 @@ public class CharacterController : MonoBehaviour
     private Vector2 _moveInput;
     private Vector2 _velocity;
     
-    private bool _isRuning;
+    private bool _isRunning;
     private bool _isJumpRequested; 
     private bool _isGrounded;
 
@@ -77,7 +77,7 @@ public class CharacterController : MonoBehaviour
 
     private void CharacterMovement()
     {
-        float targetSpeed = _isRuning ? runSpeed : walkSpeed;
+        float targetSpeed = _isRunning ? runSpeed : walkSpeed;
         
         Vector3 moveDirection = (transform.right * _moveInput.x + transform.forward * _moveInput.y).normalized;
 
@@ -93,10 +93,6 @@ public class CharacterController : MonoBehaviour
                 rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             } 
         
-        /*
-        rigidbody.AddForce(new Vector3(_moveInput.x, 0, _moveInput.y) * targetSpeed , ForceMode.Force);
-        */
-
     }
     
     private void OnJump (InputAction.CallbackContext context) // handles jump
