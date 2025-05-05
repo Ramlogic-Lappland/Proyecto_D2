@@ -26,6 +26,11 @@ public class CharacterController : MonoBehaviour
     private bool _isGrounded;
 
 
+    /* //Running check
+    private Vector2 _lastMoveInput;
+    private bool _lastIsRunning;
+     */
+    
     private void Awake()
     {
         //rigidbody = GetComponent<Rigidbody>(); esta forma es mas segura ya que llama al rigid body del objeto que tenga el script y de esa forma evitas llmar al rigid body equivocado
@@ -61,13 +66,22 @@ public class CharacterController : MonoBehaviour
     
     private void Update()
     {
-        _isGrounded = Physics.Raycast
+        _isGrounded = Physics.Raycast // checks distance from ground of player (The ray is cast from middle of the capsule)
         (
             transform.position,
             Vector3.down   ,
             groundDistanceCheck    ,
             groundLayer
         );
+        
+        /* //Running check
+                 if (_moveInput != _lastMoveInput || _isRunning != _lastIsRunning)
+        {
+            Debug.Log($"State changed: Sprint={_isRunning}, Move={_moveInput}");
+            _lastMoveInput = _moveInput;
+            _lastIsRunning = _isRunning;
+        }
+         */
 
     }
     
