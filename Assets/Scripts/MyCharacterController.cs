@@ -16,6 +16,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float airControlMultiplier = 0.5f;
     [SerializeField] private LayerMask groundLayer;
     
+    [SerializeField] private Transform cameraTransform;
     [SerializeField] private new Rigidbody rigidbody;
     //private Rigidbody rb;
     private Vector2 _moveInput;
@@ -36,6 +37,7 @@ public class CharacterController : MonoBehaviour
         //rigidbody = GetComponent<Rigidbody>(); esta forma es mas segura ya que llama al rigid body del objeto que tenga el script y de esa forma evitas llmar al rigid body equivocado
         rigidbody.freezeRotation = true;
         Cursor.lockState = CursorLockMode.Locked;
+        
     }
     
     private void OnEnable()
@@ -92,6 +94,8 @@ public class CharacterController : MonoBehaviour
 
     private void CharacterMovement()
     {
+        
+        
         float targetSpeed = _isRunning ? runSpeed : walkSpeed;
         
         Vector3 moveDirection = (transform.right * _moveInput.x + transform.forward * _moveInput.y).normalized;

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 013cba776cdeed2409ca00545a7e0e31
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304325
+  packageName: GgCore - Gaskellgames
+  packageVersion: 1.3.4
+  assetPath: Assets/Gaskellgames/GgCore/Editor/Data/GaskellgamesHubSettings.asset
+  uploadId: 754589
