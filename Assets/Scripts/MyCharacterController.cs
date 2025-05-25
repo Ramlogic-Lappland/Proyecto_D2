@@ -7,36 +7,32 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference runAction;
     [SerializeField] private InputActionReference jumpAction;
-    
     [Header("Movement Speed/Force Settings")]
     [SerializeField] private float walkSpeed = 10f;
     [SerializeField] private float runSpeed = 25f;
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float groundDistanceCheck = 0.4f;
-    [SerializeField] private float airControlMultiplier = 0.5f;
+    [SerializeField] private float groundDistanceCheck = 0.4f; // how high you can get 
+    [SerializeField] private float airControlMultiplier = 0.5f; // air speed modifier 
+    [SerializeField] private float rayStartHeight = 0.1f; // a slight elevation to have a  margin between floor and character
+    [Header("Ground layerCheck")]
     [SerializeField] private LayerMask groundLayer;
-    
-    [SerializeField] private Transform cameraTransform;
+    [Header("References")]
+    [SerializeField] private Camera playerCam; 
     [SerializeField] private new Rigidbody rigidbody;
-    //private Rigidbody rb;
+    [SerializeField] private Transform playerCapsule;
+
     private Vector2 _moveInput;
     private Vector2 _velocity;
     
     private bool _isRunning;
     private bool _isJumpRequested; 
     private bool _isGrounded;
-
-
-    /* //Running check
-    private Vector2 _lastMoveInput;
-    private bool _lastIsRunning;
-     */
+    
     
     private void Awake()
     {
-        //rigidbody = GetComponent<Rigidbody>(); esta forma es mas segura ya que llama al rigid body del objeto que tenga el script y de esa forma evitas llmar al rigid body equivocado
+        //rigidbody = GetComponent<Rigidbody>(); this way is more secure of making sure you are referencing the correct rigidBody 
         rigidbody.freezeRotation = true;
-        Cursor.lockState = CursorLockMode.Locked;
         
     }
     
@@ -68,23 +64,20 @@ public class CharacterController : MonoBehaviour
     
     private void Update()
     {
+
+         
+        var rayStart = playerCapsule.position + (Vector3.up * rayStartHeight);
+        
+        var targetSpeed = _isRunning ? runSpeed : walkSpeed; 
         _isGrounded = Physics.Raycast // checks distance from ground of player (The ray is cast from middle of the capsule)
         (
-            transform.position,
-            Vector3.down   ,
-            groundDistanceCheck    ,
+            rayStart,
+            Vector3.down,
+            rayStartHeight + groundDistanceCheck, // Total distance = start height + check distance
             groundLayer
         );
-        
-        /* //Running check
-                 if (_moveInput != _lastMoveInput || _isRunning != _lastIsRunning)
-        {
-            Debug.Log($"State changed: Sprint={_isRunning}, Move={_moveInput}");
-            _lastMoveInput = _moveInput;
-            _lastIsRunning = _isRunning;
-        }
-         */
-
+        Debug.DrawRay(rayStart, Vector3.down * (rayStartHeight + groundDistanceCheck), 
+            _isGrounded ? Color.green : Color.red);
     }
     
     private void FixedUpdate()
@@ -95,25 +88,34 @@ public class CharacterController : MonoBehaviour
     private void CharacterMovement()
     {
         
+        var targetSpeed = _isRunning ? runSpeed : walkSpeed;
         
-        float targetSpeed = _isRunning ? runSpeed : walkSpeed;
-        
-        Vector3 moveDirection = (transform.right * _moveInput.x + transform.forward * _moveInput.y).normalized;
+        var cameraForward =  playerCam.transform.forward;
+        var cameraRight = playerCam.transform.right;
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+    
+        // Calculate movement direction relative to camera
+        var moveDirection = (cameraForward * _moveInput.y + cameraRight * _moveInput.x).normalized;
 
         if (!_isGrounded)
-            moveDirection *= airControlMultiplier; 
+            moveDirection *= airControlMultiplier;
         
-        rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
+        // rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
+        
+        var horizontalVelocity = new Vector3(rigidbody.linearVelocity.x, 0, rigidbody.linearVelocity.z);
+        if (horizontalVelocity.magnitude < targetSpeed)
+        {
+            rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
+        }
 
-        
-            if (_isJumpRequested)
-            {
-                if (_isGrounded)
-                {
-                    rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                }
+        if (  _isJumpRequested && _isGrounded)
+        {
+                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                 _isJumpRequested = false;
-            } 
+        } 
     }
     
     private void OnJump (InputAction.CallbackContext context) // handles jump
