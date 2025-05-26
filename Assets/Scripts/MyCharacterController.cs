@@ -11,10 +11,11 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private float walkSpeed = 10f;
     [SerializeField] private float runSpeed = 25f;
     [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float jumpCooldown = 2f;
     [SerializeField] private float groundDistanceCheck = 0.4f; // how high you can get 
     [SerializeField] private float airControlMultiplier = 0.5f; // air speed modifier 
     [SerializeField] private float rayStartHeight = 0.1f; // a slight elevation to have a  margin between floor and character
-    [Header("Ground layerCheck")]
+    [Header("Ground Layer Reference")]
     [SerializeField] private LayerMask groundLayer;
     [Header("References")]
     [SerializeField] private Camera playerCam; 
@@ -27,13 +28,13 @@ public class CharacterController : MonoBehaviour
     private bool _isRunning;
     private bool _isJumpRequested; 
     private bool _isGrounded;
-    
+    private bool _readyToJump;
     
     private void Awake()
     {
         //rigidbody = GetComponent<Rigidbody>(); this way is more secure of making sure you are referencing the correct rigidBody 
         rigidbody.freezeRotation = true;
-        
+        _readyToJump = true;
     }
     
     private void OnEnable()
@@ -64,8 +65,6 @@ public class CharacterController : MonoBehaviour
     
     private void Update()
     {
-
-         
         var rayStart = playerCapsule.position + (Vector3.up * rayStartHeight);
         
         var targetSpeed = _isRunning ? runSpeed : walkSpeed; 
@@ -76,6 +75,8 @@ public class CharacterController : MonoBehaviour
             rayStartHeight + groundDistanceCheck, // Total distance = start height + check distance
             groundLayer
         );
+        SpeedControl();
+        
         Debug.DrawRay(rayStart, Vector3.down * (rayStartHeight + groundDistanceCheck), 
             _isGrounded ? Color.green : Color.red);
     }
@@ -111,13 +112,34 @@ public class CharacterController : MonoBehaviour
             rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
         }
 
-        if (  _isJumpRequested && _isGrounded)
+        if (_isJumpRequested && _isGrounded && _readyToJump)
         {
-                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                _isJumpRequested = false;
-        } 
+            _readyToJump = false;
+            Jump();
+            Invoke(nameof(JumpReset), jumpCooldown);
+        }
     }
-    
+    private void SpeedControl()
+    {
+        var targetSpeed = _isRunning ? runSpeed : walkSpeed; 
+        var flatVel = new Vector3(rigidbody.linearVelocity.x, 0f, rigidbody.linearVelocity.z);
+        if (flatVel.magnitude > targetSpeed)
+        {
+            var limitedVelocity = flatVel.normalized * targetSpeed;
+            rigidbody.linearVelocity = new Vector3(limitedVelocity.x, rigidbody.linearVelocity.y, limitedVelocity.z);
+        }
+    }
+    private void Jump()
+    {
+            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, 0f, rigidbody.linearVelocity.z);
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            
+            _isJumpRequested = false;
+    }
+    private void JumpReset()
+    {
+        _readyToJump = true;
+    }
     private void OnJump (InputAction.CallbackContext context) // handles jump
     {
         _isJumpRequested = true; 
@@ -134,6 +156,5 @@ public class CharacterController : MonoBehaviour
         _isRunning = context.ReadValueAsButton();
         Debug.Log("Sprint: " + _isRunning);
     }
-    
 
 }
