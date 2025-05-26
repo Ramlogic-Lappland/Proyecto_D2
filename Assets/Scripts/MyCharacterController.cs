@@ -7,11 +7,14 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference runAction;
     [SerializeField] private InputActionReference jumpAction;
+    [SerializeField] private InputActionReference crouchAction;
     [Header("Movement Speed/Force Settings")]
-    [SerializeField] private float walkSpeed = 10f;
-    [SerializeField] private float runSpeed = 25f;
+    [SerializeField] private float walkSpeed = 12f;
+    [SerializeField] private float runSpeed = 18f;
+    [SerializeField] private float crouchSpeed = 8f;
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float jumpCooldown = 2f;
+    [SerializeField] private float jumpCooldown = 0.2f;
+    [SerializeField] private float crouchYScale = 0.5f;
     [SerializeField] private float groundDistanceCheck = 0.4f; // how high you can get 
     [SerializeField] private float airControlMultiplier = 0.5f; // air speed modifier 
     [SerializeField] private float rayStartHeight = 0.1f; // a slight elevation to have a  margin between floor and character
@@ -19,22 +22,25 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [Header("References")]
     [SerializeField] private Camera playerCam; 
+    [SerializeField] private CapsuleCollider playerCapsuleCollider; 
     [SerializeField] private new Rigidbody rigidbody;
     [SerializeField] private Transform playerCapsule;
 
+    private float _startYScale;
     private Vector2 _moveInput;
     private Vector2 _velocity;
-    
     private bool _isRunning;
     private bool _isJumpRequested; 
     private bool _isGrounded;
+    private bool _isCrouching;
     private bool _readyToJump;
     
     private void Awake()
     {
-        //rigidbody = GetComponent<Rigidbody>(); this way is more secure of making sure you are referencing the correct rigidBody 
+        //rigidbody = GetComponent<Rigidbody>(); // this way is more secure of making sure you are referencing the correct rigidBody 
         rigidbody.freezeRotation = true;
         _readyToJump = true;
+        _startYScale = transform.localScale.y;
     }
     
     private void OnEnable()
@@ -44,11 +50,15 @@ public class CharacterController : MonoBehaviour
         
         runAction.action.performed += OnRun;
         runAction.action.canceled += OnRun;
+
+        crouchAction.action.performed += OnCrouch;
+        crouchAction.action.canceled += OnCrouch;
         
         jumpAction.action.started += OnJump; 
         
         moveAction.action.Enable();
         runAction.action.Enable();
+        crouchAction.action.Enable();
         jumpAction.action.Enable();
     }
 
@@ -60,7 +70,18 @@ public class CharacterController : MonoBehaviour
         runAction.action.performed -= OnRun;
         runAction.action.canceled -= OnRun;
         
+        crouchAction.action.performed -= OnCrouch;
+        crouchAction.action.canceled -= OnCrouch;
+        
+        crouchAction.action.performed -= OnRun;
+        crouchAction.action.canceled -= OnRun;
+        
         jumpAction.action.started -= OnJump;
+        
+        moveAction.action.Disable();
+        runAction.action.Disable();
+        crouchAction.action.Disable();
+        jumpAction.action.Disable();
     }
     
     private void Update()
@@ -97,9 +118,8 @@ public class CharacterController : MonoBehaviour
         cameraRight.y = 0f;
         cameraForward.Normalize();
         cameraRight.Normalize();
-    
-        // Calculate movement direction relative to camera
-        var moveDirection = (cameraForward * _moveInput.y + cameraRight * _moveInput.x).normalized;
+        
+        var moveDirection = (cameraForward * _moveInput.y + cameraRight * _moveInput.x).normalized; // Calculate movement direction relative to camera
 
         if (!_isGrounded)
             moveDirection *= airControlMultiplier;
@@ -140,11 +160,6 @@ public class CharacterController : MonoBehaviour
     {
         _readyToJump = true;
     }
-    private void OnJump (InputAction.CallbackContext context) // handles jump
-    {
-        _isJumpRequested = true; 
-    }
-    
     private void OnMove (InputAction.CallbackContext context) // handles walk
     {
         Debug.Log(message:context.ReadValue<Vector2>());
@@ -155,6 +170,43 @@ public class CharacterController : MonoBehaviour
     {
         _isRunning = context.ReadValueAsButton();
         Debug.Log("Sprint: " + _isRunning);
+    }
+    private void OnCrouch(InputAction.CallbackContext context)
+    {
+        if (!isActiveAndEnabled) return;  
+        _isCrouching = context.ReadValueAsButton(); 
+        
+        if (_isCrouching)
+        {
+            transform.localScale = new Vector3 // Shrink player and collider
+            (       
+                transform.localScale.x,
+                crouchYScale,
+                transform.localScale.z
+            );
+        
+            // Adjust collider height and center
+            playerCapsuleCollider.height = crouchYScale * 2; // Capsule height is diameter
+            playerCapsuleCollider.center = new Vector3(0, crouchYScale, 0); // Move center up
+        }
+        else
+        {
+            transform.localScale = new Vector3 // Restore original size
+            (   
+                transform.localScale.x,
+                _startYScale,
+                transform.localScale.z
+            );
+        
+            playerCapsuleCollider.height = _startYScale * 2;
+            playerCapsuleCollider.center = Vector3.zero;
+        }
+
+        walkSpeed = _isCrouching ? crouchSpeed : walkSpeed;
+    }
+    private void OnJump (InputAction.CallbackContext context) // handles jump
+    {
+        _isJumpRequested = true; 
     }
 
 }
