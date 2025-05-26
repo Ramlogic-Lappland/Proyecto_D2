@@ -32,8 +32,8 @@ public class GunSystem : MonoBehaviour
     [SerializeField] private float bulletHoleLifetime = 5f;
     [SerializeField] private float muzzleFlashLifetime = 0.1f;
 
-    private Queue<GameObject> bulletHolePool = new Queue<GameObject>();
-    private Queue<GameObject> muzzleFlashPool = new Queue<GameObject>();
+    private Queue<GameObject> _bulletHolePool = new Queue<GameObject>();
+    private Queue<GameObject> _muzzleFlashPool = new Queue<GameObject>();
     
 
     public bool allowButtonHold = false;
@@ -56,7 +56,7 @@ public class GunSystem : MonoBehaviour
         {
             var bh = Instantiate(bulletHole);
             bh.SetActive(false);
-            bulletHolePool.Enqueue(bh);
+            _bulletHolePool.Enqueue(bh);
         }
     
 
@@ -64,7 +64,7 @@ public class GunSystem : MonoBehaviour
         {
             var mf = Instantiate(muzzleFlash);
             mf.SetActive(false);
-            muzzleFlashPool.Enqueue(mf);
+            _muzzleFlashPool.Enqueue(mf);
         }
     }
 
@@ -96,9 +96,7 @@ public class GunSystem : MonoBehaviour
             TryShoot();
         }
         else
-        {
             TryShoot();
-        }
     }
     private void OnShootCanceled(InputAction.CallbackContext context)
     {
@@ -116,9 +114,8 @@ public class GunSystem : MonoBehaviour
     }
     private void TryShoot()
     {
-        if (_readyToShoot && !_reloading && _bulletsLeft > 0)
+        if (_readyToShoot && !_reloading && _bulletsLeft >= bulletsPerTrigger)  // Changed condition
         {
-            _bulletsShot = bulletsPerTrigger;
             Shoot();
         }
     }
@@ -126,41 +123,50 @@ public class GunSystem : MonoBehaviour
     private void Shoot()
     {
         _readyToShoot = false;
-        
-        var flash = GetPooledObject(muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);
-        StartCoroutine(ReturnToPool(flash, muzzleFlashPool, muzzleFlashLifetime));
-        
-        var x = Random.Range(-spread, spread);
-        var y = Random.Range(-spread, spread);
+    
+        // Show muzzle flash once per trigger pull
+        var flash = GetPooledObject(_muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);
+        StartCoroutine(ReturnToPool(flash, _muzzleFlashPool, muzzleFlashLifetime));
+    
+        // Fire all pellets at once
+        for (int i = 0; i < bulletsPerTrigger; i++)
+        {
+            FireSinglePellet();
+        }
+    
+        _bulletsLeft -= bulletsPerTrigger;  // Deduct all bullets at once
+    
+        Invoke(nameof(ResetShoot), fireRate);  // Use fireRate for delay between shots
+    }
 
-        var direction = playerCamera.transform.forward + new Vector3(x, y, 0);
-        
+    private void FireSinglePellet()
+    {
+        float x = Random.Range(-spread, spread);
+        float y = Random.Range(-spread, spread);
+        Vector3 direction = playerCamera.transform.forward + new Vector3(x, y, 0);
+    
         if (Physics.Raycast(playerCamera.transform.position, direction, out _rayHit, range, enemyType))
         {
-            Debug.Log(_rayHit.collider.name);
-            var hole = GetPooledObject(bulletHolePool, bulletHole, _rayHit.point, Quaternion.Euler(0, 180, 0));
-            StartCoroutine(ReturnToPool(hole, bulletHolePool, bulletHoleLifetime));
+            var hole = GetPooledObject(
+                _bulletHolePool,
+                bulletHole,
+                _rayHit.point + _rayHit.normal * 0.01f,
+                Quaternion.LookRotation(_rayHit.normal)
+            );
+            StartCoroutine(ReturnToPool(hole, _bulletHolePool, bulletHoleLifetime));
+        
+            // Enemy damage logic would go here
             // if (_rayHit.collider.CompareTag("Enemy"))
-            //     _rayHit.collider.GetComponent<ShootingAi>().TakeDamage(damage);
+            //    _rayHit.collider.GetComponent<ShootingAi>().TakeDamage(damage);
         }
-
-        //Instantiate(bulletHole, _rayHit.point, Quaternion.Euler(0, 180, 0));
-        //Instantiate(muzzleFlash, attackPoint.position, quaternion.identity);
-        
-        _bulletsLeft--;
-        _bulletsShot--;
-        
-        Invoke(nameof(ResetShoot), timeBetweenShots);
-        
-        if (_bulletsShot > 0 && _bulletsLeft > 0) 
-            Invoke(nameof(Shoot), timeBetweenShots);
     }
+
     private void ResetShoot()
     {
         _readyToShoot = true;
-        CancelInvoke(nameof(Shoot));
-
-        if (allowButtonHold && _shooting)
+    
+        // Auto-fire if still holding trigger
+        if (allowButtonHold && _shooting && _bulletsLeft >= bulletsPerTrigger)
         {
             TryShoot();
         }
@@ -199,6 +205,4 @@ public class GunSystem : MonoBehaviour
         obj.SetActive(false);
         pool.Enqueue(obj);
     }
-    
-
 }

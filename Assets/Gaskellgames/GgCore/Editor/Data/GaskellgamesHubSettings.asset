@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GaskellgamesHubSettings
   m_EditorClassIdentifier: 
   verboseLogs: 0
-  showHubOnStartup: 0
+  showHubOnStartup: 1
   showPackageBanners: 0
   showHierarchyBreadcrumbs: 1
   showHierarchyIcons: 0

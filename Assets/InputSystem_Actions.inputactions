@@ -496,7 +496,7 @@
                 {
                     "name": "",
                     "id": "168cfee7-7963-4247-81ed-b1f29a65e1b1",
-                    "path": "<XRController>{RightHand}/{PrimaryTrigger}",
+                    "path": "<XInputController>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": ";XR",
