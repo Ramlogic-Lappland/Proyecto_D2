@@ -163,9 +163,9 @@ public class GunSystemRayCast : MonoBehaviour
             );
             StartCoroutine(ReturnToPool(hole, _bulletHolePool, bulletHoleLifetime));
         
-            // Enemy damage logic would go here
-            // if (_rayHit.collider.CompareTag("Enemy"))
-            //    _rayHit.collider.GetComponent<ShootingAi>().TakeDamage(damage);
+            
+            if (_rayHit.collider.CompareTag("Enemy"))
+                _rayHit.collider.GetComponent<AiNpc>().TakeDamage(damage);
         }
     }
 

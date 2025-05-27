@@ -12,7 +12,6 @@ public class GunSystemInstance : MonoBehaviour
     [SerializeField] private InputActionReference shoot;
     [SerializeField] private InputActionReference reload;
     [Header("Gun Settings")]
-    [SerializeField] private int damage;
     [SerializeField] private int magazineSize;
     [SerializeField] private int bulletsPerTrigger;
     [SerializeField] private float range;   
@@ -177,10 +176,6 @@ public class GunSystemInstance : MonoBehaviour
                 Quaternion.LookRotation(_rayHit.normal)
             );
             StartCoroutine(ReturnToPool(hole, bulletHolePool, bulletHoleLifetime));
-        
-            // Enemy damage logic would go here
-            // if (_rayHit.collider.CompareTag("Enemy"))
-            //    _rayHit.collider.GetComponent<ShootingAi>().TakeDamage(damage);
         }
     }
 

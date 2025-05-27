@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1059982918058226562}
   - component: {fileID: 4341335184190126980}
   - component: {fileID: 6961888089010175078}
+  - component: {fileID: -2760791196203152282}
+  - component: {fileID: 6237984660508210125}
   m_Layer: 0
   m_Name: MyShotGunBullet
   m_TagString: Untagged
@@ -114,3 +116,48 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &-2760791196203152282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6199214655590532097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b67b56739881e1e4c908c60de2634604, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 6961888089010175078}
+  hitEffect: {fileID: 0}
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 128
+  bounciness: 0
+  useGravity: 0
+  rangeOfExplosion: 1
+  maxCollisions: 1
+  bulletDamage: 20
+  maxLifeTime: 5
+  explodeOnCollision: 1
+--- !u!135 &6237984660508210125
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6199214655590532097}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.040625
+  m_Center: {x: 0, y: 0, z: -0.010624997}
