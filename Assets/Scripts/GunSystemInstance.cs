@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Random = UnityEngine.Random;
 using TMPro;
+using Random = UnityEngine.Random;
 
-public class GunSystemRayCast : MonoBehaviour
+public class GunSystemInstance : MonoBehaviour
 {
     [Header("Input System Actions")]
     [SerializeField] private InputActionReference shoot;
@@ -21,12 +20,15 @@ public class GunSystemRayCast : MonoBehaviour
     [SerializeField] private float timeBetweenShots;
     [SerializeField] private float reloadTime;
     [SerializeField] private float spread;
+    [SerializeField] private float bulletForce;
+    [SerializeField] private float bulletForceUp;
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private LayerMask enemyType;
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHole;
+    [SerializeField] private GameObject bullet;
     [SerializeField] private TextMeshPro ammoDisplay;
     [Header("Object Pooling")]
     [SerializeField] private int maxBulletHoles = 20;
@@ -34,10 +36,9 @@ public class GunSystemRayCast : MonoBehaviour
     [SerializeField] private float bulletHoleLifetime = 5f;
     [SerializeField] private float muzzleFlashLifetime = 0.1f;
 
-    private Queue<GameObject> _bulletHolePool = new Queue<GameObject>();
-    private Queue<GameObject> _muzzleFlashPool = new Queue<GameObject>();
+    readonly Queue<GameObject> bulletHolePool = new Queue<GameObject>(); 
+    readonly Queue<GameObject> muzzleFlashPool = new Queue<GameObject>();
     
-
     public bool allowButtonHold = false;
     private RaycastHit _rayHit;
     
@@ -58,7 +59,7 @@ public class GunSystemRayCast : MonoBehaviour
         {
             var bh = Instantiate(bulletHole);
             bh.SetActive(false);
-            _bulletHolePool.Enqueue(bh);
+            bulletHolePool.Enqueue(bh);
         }
     
 
@@ -66,7 +67,7 @@ public class GunSystemRayCast : MonoBehaviour
         {
             var mf = Instantiate(muzzleFlash);
             mf.SetActive(false);
-            _muzzleFlashPool.Enqueue(mf);
+            muzzleFlashPool.Enqueue(mf);
         }
     }
 
@@ -89,13 +90,13 @@ public class GunSystemRayCast : MonoBehaviour
         reload.action.Disable();
         shoot.action.Disable();
     }
-    
+
     private void Update()
     {
         if (ammoDisplay != null)
             ammoDisplay.SetText(_bulletsLeft / bulletsPerTrigger + "/" + magazineSize / bulletsPerTrigger); 
     }
-    
+
     private void OnShootPerformed(InputAction.CallbackContext context)
     {
         if (allowButtonHold)
@@ -131,37 +132,51 @@ public class GunSystemRayCast : MonoBehaviour
     private void Shoot()
     {
         _readyToShoot = false;
+
+        var flash = GetPooledObject(muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);     // Show muzzle flash once per trigger pull
+        StartCoroutine(ReturnToPool(flash, muzzleFlashPool, muzzleFlashLifetime));
     
-        // Show muzzle flash once per trigger pull
-        var flash = GetPooledObject(_muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);
-        StartCoroutine(ReturnToPool(flash, _muzzleFlashPool, muzzleFlashLifetime));
-    
-        // Fire all pellets at once
-        for (int i = 0; i < bulletsPerTrigger; i++)
+
+        for (var i = 0; i < bulletsPerTrigger; i++)    // Code works like this to fire all pellets at once
         {
             FireSinglePellet();
         }
     
-        _bulletsLeft -= bulletsPerTrigger;  // Deduct all bullets at once
+        _bulletsLeft -= bulletsPerTrigger;  // Decrease all bullets at once
     
         Invoke(nameof(ResetShoot), fireRate);  // Use fireRate for delay between shots
     }
 
     private void FireSinglePellet()
     {
+        var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        RaycastHit hit;
+        Vector3 targetPoint;
+        if (Physics.Raycast(ray, out hit))
+            targetPoint = hit.point;
+        else
+            targetPoint = ray.GetPoint(75);
+            
+        var directionWithoutSpread = targetPoint - attackPoint.position;
         var x = Random.Range(-spread, spread);
         var y = Random.Range(-spread, spread);
-        var direction = playerCamera.transform.forward + new Vector3(x, y, 0);
+        var directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
+        
+        var currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
+        currentBullet.transform.forward = directionWithSpread.normalized;
+        
+        currentBullet.GetComponent<Rigidbody>().AddForce(directionWithoutSpread.normalized * bulletForce, ForceMode.Impulse);
+        currentBullet.GetComponent<Rigidbody>().AddForce(playerCamera.transform.up * bulletForceUp, ForceMode.Impulse);
     
-        if (Physics.Raycast(playerCamera.transform.position, direction, out _rayHit, range, enemyType))
+        if (Physics.Raycast(playerCamera.transform.position, directionWithSpread, out _rayHit, range, enemyType))
         {
             var hole = GetPooledObject(
-                _bulletHolePool,
+                bulletHolePool,
                 bulletHole,
                 _rayHit.point + _rayHit.normal * 0.01f,
                 Quaternion.LookRotation(_rayHit.normal)
             );
-            StartCoroutine(ReturnToPool(hole, _bulletHolePool, bulletHoleLifetime));
+            StartCoroutine(ReturnToPool(hole, bulletHolePool, bulletHoleLifetime));
         
             // Enemy damage logic would go here
             // if (_rayHit.collider.CompareTag("Enemy"))
