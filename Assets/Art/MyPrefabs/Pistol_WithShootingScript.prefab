@@ -268,6 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4181907477219779623}
   - component: {fileID: 5115139824170832252}
+  - component: {fileID: -7749913461718969987}
   m_Layer: 0
   m_Name: Pistol_WithShootingScript
   m_TagString: Untagged
@@ -327,11 +328,36 @@ MonoBehaviour:
     m_Bits: 4294967295
   muzzleFlash: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   bulletHole: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980, type: 3}
+  ammoDisplay: {fileID: 0}
   maxBulletHoles: 10
   maxMuzzleFlashes: 10
   bulletHoleLifetime: 5
   muzzleFlashLifetime: 0.2
   allowButtonHold: 0
+--- !u!114 &-7749913461718969987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2499347021468231613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86925cf87fa675045bdd64664eb294e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropAction: {fileID: 0}
+  bullet: {fileID: 0}
+  gunScript: {fileID: 0}
+  rb: {fileID: 0}
+  gunCollider: {fileID: 0}
+  playerTransform: {fileID: 0}
+  gunHolder: {fileID: 0}
+  playerCamera: {fileID: 0}
+  pickUpRange: 0
+  dropForwardForce: 0
+  dropUpwardForce: 0
+  equipped: 0
 --- !u!1 &4103146142344482541
 GameObject:
   m_ObjectHideFlags: 0

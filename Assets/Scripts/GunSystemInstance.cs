@@ -24,18 +24,16 @@ public class GunSystemInstance : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private LayerMask enemyType;
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHole;
     [SerializeField] private GameObject bullet;
     [SerializeField] private TextMeshPro ammoDisplay;
     [Header("Object Pooling")]
-    [SerializeField] private int maxBulletHoles = 20;
+    [SerializeField] private int bulletPoolSize = 20;
     [SerializeField] private int maxMuzzleFlashes = 5;
-    [SerializeField] private float bulletHoleLifetime = 5f;
     [SerializeField] private float muzzleFlashLifetime = 0.1f;
 
-    readonly Queue<GameObject> bulletHolePool = new Queue<GameObject>(); 
+    private Queue<GameObject> bulletPool = new Queue<GameObject>();
     readonly Queue<GameObject> muzzleFlashPool = new Queue<GameObject>();
     
     public bool allowButtonHold = false;
@@ -47,21 +45,19 @@ public class GunSystemInstance : MonoBehaviour
     private bool _shooting;
     private bool _readyToShoot;
     private bool _reloading;
-
+    
     private void Awake()
     {
         _bulletsLeft = magazineSize;
         _readyToShoot = true;
         
-
-        for (var i = 0; i < maxBulletHoles; i++)
+        for (int i = 0; i < bulletPoolSize; i++)
         {
-            var bh = Instantiate(bulletHole);
-            bh.SetActive(false);
-            bulletHolePool.Enqueue(bh);
+            var newBullet = Instantiate(bullet);
+            newBullet.SetActive(false);
+            bulletPool.Enqueue(newBullet);
         }
-    
-
+        
         for (var i = 0; i < maxMuzzleFlashes; i++)
         {
             var mf = Instantiate(muzzleFlash);
@@ -148,37 +144,59 @@ public class GunSystemInstance : MonoBehaviour
 
     private void FireSinglePellet()
     {
-        var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
+        var rayOrigin = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)).origin;
+        var direction = GetSpreadDirection(rayOrigin);
+        
+        var currentBullet = GetPooledBullet();
+        if (currentBullet == null) return; 
+
+        currentBullet.transform.position = attackPoint.position;
+        currentBullet.transform.rotation = Quaternion.LookRotation(direction);
+        currentBullet.SetActive(true);
+        
+        var rb = currentBullet.GetComponent<Rigidbody>();
+        rb.linearVelocity = Vector3.zero; // Reset velocity
+        rb.AddForce(direction.normalized * bulletForce, ForceMode.Impulse);
+        rb.AddForce(playerCamera.transform.up * bulletForceUp, ForceMode.Impulse);
+        
+        StartCoroutine(ReturnBulletToPool(currentBullet));
+    }
+    
+    private Vector3 GetSpreadDirection(Vector3 rayOrigin)
+    {
         Vector3 targetPoint;
-        if (Physics.Raycast(ray, out hit))
+        var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+    
+        if (Physics.Raycast(ray, out var hit, range))
             targetPoint = hit.point;
         else
-            targetPoint = ray.GetPoint(75);
-            
+            targetPoint = ray.GetPoint(range);
+    
         var directionWithoutSpread = targetPoint - attackPoint.position;
         var x = Random.Range(-spread, spread);
         var y = Random.Range(-spread, spread);
-        var directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
-        
-        var currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
-        currentBullet.transform.forward = directionWithSpread.normalized;
-        
-        currentBullet.GetComponent<Rigidbody>().AddForce(directionWithoutSpread.normalized * bulletForce, ForceMode.Impulse);
-        currentBullet.GetComponent<Rigidbody>().AddForce(playerCamera.transform.up * bulletForceUp, ForceMode.Impulse);
     
-        if (Physics.Raycast(playerCamera.transform.position, directionWithSpread, out _rayHit, range, enemyType))
-        {
-            var hole = GetPooledObject(
-                bulletHolePool,
-                bulletHole,
-                _rayHit.point + _rayHit.normal * 0.01f,
-                Quaternion.LookRotation(_rayHit.normal)
-            );
-            StartCoroutine(ReturnToPool(hole, bulletHolePool, bulletHoleLifetime));
-        }
+        return directionWithoutSpread + new Vector3(x, y, 0);
     }
-
+    private GameObject GetPooledBullet()
+    {
+        if (bulletPool.Count > 0)
+        {
+            return bulletPool.Dequeue();
+        }
+        
+        var newBullet = Instantiate(bullet);
+        return newBullet;
+    }
+    
+    private IEnumerator ReturnBulletToPool(GameObject bullet)
+    {
+        yield return new WaitForSeconds(3f); 
+    
+        bullet.SetActive(false);
+        bulletPool.Enqueue(bullet);
+    }
+    
     private void ResetShoot()
     {
         _readyToShoot = true;

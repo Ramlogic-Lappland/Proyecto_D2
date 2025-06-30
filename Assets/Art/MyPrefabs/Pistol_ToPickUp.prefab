@@ -182,6 +182,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6900134155202953326}
   - component: {fileID: 6891826654564811889}
+  - component: {fileID: 371745799131326450}
+  - component: {fileID: 3070319279423248641}
+  - component: {fileID: -4050707671065336797}
   m_Layer: 0
   m_Name: Pistol_ToPickUp
   m_TagString: Untagged
@@ -233,6 +236,92 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.07641755, y: 0.20991774, z: 0.26227316}
   m_Center: {x: 0.0012012273, y: -0.037367705, z: 0.01724501}
+--- !u!54 &371745799131326450
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5172382378993578628}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &3070319279423248641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5172382378993578628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dca853b39cb42144af76777ecc70b6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shoot: {fileID: 0}
+  reload: {fileID: 0}
+  damage: 10
+  magazineSize: 11
+  bulletsPerTrigger: 1
+  range: 200
+  fireRate: 1
+  timeBetweenShots: 0.2
+  reloadTime: 0.5
+  spread: 0.01
+  playerCamera: {fileID: 0}
+  attackPoint: {fileID: 0}
+  enemyType:
+    serializedVersion: 2
+    m_Bits: 0
+  muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc, type: 3}
+  bulletHole: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980, type: 3}
+  ammoDisplay: {fileID: 0}
+  maxBulletHoles: 20
+  maxMuzzleFlashes: 5
+  bulletHoleLifetime: 5
+  muzzleFlashLifetime: 0.1
+  allowButtonHold: 1
+--- !u!114 &-4050707671065336797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5172382378993578628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86925cf87fa675045bdd64664eb294e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropAction: {fileID: 0}
+  bullet: {fileID: 6199214655590532097, guid: 624c85b2506178c45af44d70c6d8ba5f, type: 3}
+  gunScript: {fileID: 0}
+  rb: {fileID: 0}
+  gunCollider: {fileID: 0}
+  playerTransform: {fileID: 0}
+  gunHolder: {fileID: 0}
+  playerCamera: {fileID: 0}
+  pickUpRange: 0
+  dropForwardForce: 0
+  dropUpwardForce: 0
+  equipped: 0
 --- !u!1 &6052128345701055159
 GameObject:
   m_ObjectHideFlags: 0
