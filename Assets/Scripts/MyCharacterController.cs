@@ -54,16 +54,19 @@ public class CharacterController : MonoBehaviour
         crouchAction.action.performed += OnCrouch;
         crouchAction.action.canceled += OnCrouch;
         
-        jumpAction.action.started += OnJump; 
+        jumpAction.action.started += OnJump;
+        
         
         moveAction.action.Enable();
         runAction.action.Enable();
         crouchAction.action.Enable();
         jumpAction.action.Enable();
+        
     }
 
     private void OnDisable()
     {
+        
         moveAction.action.performed -= OnMove;
         moveAction.action.canceled -= OnMove;
         
@@ -82,6 +85,7 @@ public class CharacterController : MonoBehaviour
         runAction.action.Disable();
         crouchAction.action.Disable();
         jumpAction.action.Disable();
+
     }
     
     private void Update()
@@ -208,5 +212,6 @@ public class CharacterController : MonoBehaviour
     {
         _isJumpRequested = true; 
     }
+
 
 }

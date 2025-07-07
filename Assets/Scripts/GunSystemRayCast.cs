@@ -122,7 +122,7 @@ public class GunSystemRayCast : MonoBehaviour
     }
     private void TryShoot()
     {
-        if (_readyToShoot && !_reloading && _bulletsLeft >= bulletsPerTrigger)  // Changed condition
+        if (_readyToShoot && !_reloading && _bulletsLeft >= bulletsPerTrigger && PauseMenu.IsPaused == false)  // Changed condition
         {
             Shoot();
         }
@@ -165,7 +165,7 @@ public class GunSystemRayCast : MonoBehaviour
         
             
             if (_rayHit.collider.CompareTag("Enemy"))
-                _rayHit.collider.GetComponent<AiNpc>().TakeDamage(damage);
+                _rayHit.collider.GetComponent<EnemyLogic>().TakeDamage(damage);
         }
     }
 

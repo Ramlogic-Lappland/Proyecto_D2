@@ -46,7 +46,7 @@ public class BulletLogic : MonoBehaviour
         
         for (var i = 0; i < enemies.Length; i++)
         {
-            enemies[i].GetComponent<AiNpc>().TakeDamage(bulletDamage);
+            enemies[i].GetComponent<EnemyLogic>().TakeDamage(bulletDamage);
         }
         
         Invoke(nameof(Delay), 0.5f);
