@@ -131,7 +131,7 @@ MonoBehaviour:
   useGravity: 0
   rangeOfExplosion: 1
   maxCollisions: 1
-  bulletDamage: 1
+  bulletDamage: 5
   maxLifeTime: 0
   explodeOnCollision: 1
 --- !u!54 &2206921054367827303
