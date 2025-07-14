@@ -15,7 +15,6 @@ public class GameEventsManager : MonoBehaviour
   {
     OnOpenDoorEventTrigger?.Invoke(id);
   }
-  
   public event Action<int> OnCloseDoorEventTrigger;
   public void CloseDoorEventTrigger(int id)
   {

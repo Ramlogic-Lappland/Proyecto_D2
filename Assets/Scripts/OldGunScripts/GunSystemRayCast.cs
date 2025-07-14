@@ -36,8 +36,9 @@ public class GunSystemRayCast : MonoBehaviour
 
     private Queue<GameObject> _bulletHolePool = new Queue<GameObject>();
     private Queue<GameObject> _muzzleFlashPool = new Queue<GameObject>();
-    
 
+
+    public GameObject Gun;
     public bool allowButtonHold = false;
     private RaycastHit _rayHit;
     
@@ -135,6 +136,7 @@ public class GunSystemRayCast : MonoBehaviour
         // Show muzzle flash once per trigger pull
         var flash = GetPooledObject(_muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);
         StartCoroutine(ReturnToPool(flash, _muzzleFlashPool, muzzleFlashLifetime));
+        StartCoroutine(StartRecoil());
     
         // Fire all pellets at once
         for (int i = 0; i < bulletsPerTrigger; i++)
@@ -212,5 +214,12 @@ public class GunSystemRayCast : MonoBehaviour
         yield return new WaitForSeconds(delay);
         obj.SetActive(false);
         pool.Enqueue(obj);
+    }
+
+    IEnumerator StartRecoil()
+    {
+        Gun.GetComponent<Animator>().Play("PistolRecoil");
+        yield return new WaitForSeconds(0.20f);
+        Gun.GetComponent<Animator>().Play("New State");
     }
 }
