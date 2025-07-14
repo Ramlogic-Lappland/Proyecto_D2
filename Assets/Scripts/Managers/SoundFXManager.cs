@@ -13,6 +13,11 @@ public class SoundFXManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject); // Keeps object alive across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Prevents duplicates
         }
     }
 

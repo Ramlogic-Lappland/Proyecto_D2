@@ -9,13 +9,13 @@ public class DoorTrigger : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        GameEventsManager.Current.OpenDoorEventTrigger(id);
+        GameEventsManager.Instance.OpenDoorEventTrigger(id);
     }
     /// <summary>
     /// player exists the collider calling the door close trigger
     /// </summary>
     private void OnTriggerExit(Collider other)
     {
-        GameEventsManager.Current.CloseDoorEventTrigger(id);
+        GameEventsManager.Instance.CloseDoorEventTrigger(id);
     }
 }

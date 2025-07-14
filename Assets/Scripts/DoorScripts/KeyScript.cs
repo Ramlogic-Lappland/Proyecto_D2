@@ -11,7 +11,7 @@ public class KeyScript : MonoBehaviour
         {
             //PlayerInventory.Current.AddKey(doorID);
 
-            GameEventsManager.Current.OpenDoorEventTrigger(doorID);
+            GameEventsManager.Instance.OpenDoorEventTrigger(doorID);
             
             Destroy(keyObject);
         }

@@ -3,11 +3,19 @@ using UnityEngine;
 
 public class GameEventsManager : MonoBehaviour
 {
-  public static GameEventsManager Current;
+  public static GameEventsManager Instance;
 
   private void Awake()
   {
-    Current = this;
+    if (Instance == null)
+    {
+      Instance = this;
+      DontDestroyOnLoad(gameObject); // Keeps object alive across scenes
+    }
+    else
+    {
+      Destroy(gameObject); // Prevents duplicates
+    }
   }
   
   public event Action<int> OnOpenDoorEventTrigger;

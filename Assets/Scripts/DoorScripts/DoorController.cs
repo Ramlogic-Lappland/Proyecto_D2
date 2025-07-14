@@ -48,8 +48,8 @@ public class DoorController : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        GameEventsManager.Current.OnOpenDoorEventTrigger += OpenDoor;
-        GameEventsManager.Current.OnCloseDoorEventTrigger += CloseDoor;
+        GameEventsManager.Instance.OnOpenDoorEventTrigger += OpenDoor;
+        GameEventsManager.Instance.OnCloseDoorEventTrigger += CloseDoor;
     }
     
     /// <summary>
@@ -85,7 +85,7 @@ public class DoorController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        GameEventsManager.Current.OnOpenDoorEventTrigger  -= OpenDoor;
-        GameEventsManager.Current.OnCloseDoorEventTrigger -= CloseDoor;
+        GameEventsManager.Instance.OnOpenDoorEventTrigger  -= OpenDoor;
+        GameEventsManager.Instance.OnCloseDoorEventTrigger -= CloseDoor;
     }
 }
