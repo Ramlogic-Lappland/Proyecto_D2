@@ -2,45 +2,43 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private InputActionReference pauseAction;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button quitButton;
     public GameObject pauseMenu;
     public static bool IsPaused;
-
-
+    
     /// <summary>
-    /// sets that menu by default is off once scene loads
+    /// adds a  listener to menu manager of the methods in this class
     /// </summary>
     private void Start()
     {
+        resumeButton.onClick.AddListener(ResumeGame);
+        mainMenuButton.onClick.AddListener(LoadMainMenu);
+        quitButton.onClick.AddListener(QuitGame);
         pauseMenu.SetActive(false);
     }
 
-    /// <summary>
-    /// Enables the new input system pause button call
-    /// </summary>
     private void OnEnable()
     {
         pauseAction.action.started += PauseCalled;
         pauseAction.action.Enable();
     }
-/// <summary>
-/// Disables the new input system pause button call
-/// </summary>
+
     private void OnDisable()
     {
         pauseAction.action.started -= PauseCalled;
         pauseAction.action.Disable();
     }
-    
-/// <summary>
-/// Depending on if Pause was called when was true or false, decides to set the boolean the oposite of its current state
-/// </summary>
-/// <param name="context"></param>
+
     private void PauseCalled(InputAction.CallbackContext context)
     {
+        if (SceneManager.GetActiveScene().name == "MainMenu") return;
         if (IsPaused)
         {
             ResumeGame();
@@ -51,9 +49,6 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-/// <summary>
-/// sets the pause menu as active and stops game
-/// </summary>
     public void PauseGame()
     {
         pauseMenu.SetActive(true);
@@ -62,9 +57,7 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
     }
-/// <summary>
-/// disables pause menu and resumes game
-/// </summary>
+
     public void ResumeGame()
     {
         pauseMenu.SetActive(false);
@@ -73,21 +66,16 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    /// <summary>
-    /// gos to main menu from button
-    /// </summary>
-    /// <param name="sceneName"></param>
-    public void GoToMainMenu(string sceneName)
+
+    private void LoadMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f; // Ensure timescale is reset
+        IsPaused = false;
+        ScenesManager.Instance.LoadMainMenu(); // Use your existing SceneManager
     }
-    /// <summary>
-    /// quits game (in case of editor sends a  log msg)
-    /// </summary>
-    public void QuitGame()
+
+    private void QuitGame()
     {
-        Application.Quit();
-        Debug.unityLogger.Log("Game has been Closed");
+        ScenesManager.Instance.QuitGame(); // Use your existing SceneManager
     }
 }

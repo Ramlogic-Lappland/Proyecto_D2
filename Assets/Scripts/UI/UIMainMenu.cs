@@ -37,6 +37,6 @@ public class UIMainMenu : MonoBehaviour
 /// </summary>
     private void QuitGame()
     {
-        Application.Quit();
+        ScenesManager.Instance.QuitGame();
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class ScenesManager : MonoBehaviour
 {
-    public static ScenesManager Instance;
+    public static ScenesManager Instance { get; private set; }
 
     /// <summary>
     /// declares that the instance of ScenesManager is this one
@@ -13,11 +13,11 @@ public class ScenesManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); 
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
@@ -74,6 +74,10 @@ public class ScenesManager : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit();
+#endif
     }
 }

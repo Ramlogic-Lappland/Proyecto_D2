@@ -121,14 +121,29 @@ public class Enemy : MonoBehaviour
 
         if (!_alreadyAttacked)
         {
-            var rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 30f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 2f, ForceMode.Impulse);
-            
+            // Instantiate projectile
+            var projectileObj = Instantiate(projectile, transform.position, Quaternion.identity);
+        
+            // Get the rigidbody and set velocity
+            var rb = projectileObj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                var direction = (player.position - transform.position).normalized;
+                rb.linearVelocity = direction * 30f;
+            }
+        
+            // Set damage amount (if your projectile has the script)
+            var projectileScript = projectileObj.GetComponent<EnemyProjectile>();
+            if (projectileScript != null)
+            {
+                projectileScript.damageAmount = enemyDamage; // Now works
+            }
+
             _alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
         }
     }
+    
     private void ResetAttack()
     {
         _alreadyAttacked = false;
