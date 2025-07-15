@@ -27,7 +27,7 @@ public class GunSystemRayCast : MonoBehaviour
     [SerializeField] private LayerMask enemyType;
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHole;
-    [SerializeField] private TextMeshPro ammoDisplay;
+    [SerializeField] private TextMeshProUGUI ammoDisplay;
     [Header("Object Pooling")]
     [SerializeField] private int maxBulletHoles = 20;
     [SerializeField] private int maxMuzzleFlashes = 5;
