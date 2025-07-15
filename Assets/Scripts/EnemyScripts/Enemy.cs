@@ -26,9 +26,15 @@ public class Enemy : MonoBehaviour
     private IObjectPool<Enemy> _enemyPool;
     private Vector3 _lastPosition;
     private float _stuckTime;
+    [Header("Pooling")]
+    public bool isTutorialEnemy = false;
+
     public void SetPool(IObjectPool<Enemy> pool)
     {
-        _enemyPool = pool;
+        if (!isTutorialEnemy)
+        {
+            _enemyPool = pool;
+        }
     }
 
     private void Awake()
@@ -140,14 +146,20 @@ public class Enemy : MonoBehaviour
 
     private void DestroyEnemy()
     {
-        if (_enemyPool == null)
+        if (isTutorialEnemy)
         {
             _scoreManager.score += 100f;
-            Debug.LogError("EnemyPool is null! Enemy not released.");
-            Destroy(gameObject); 
-            return;
+            Destroy(gameObject);
         }
-        _enemyPool.Release(this);
+        else if (_enemyPool != null)
+        {
+            _enemyPool.Release(this);
+        }
+        else
+        {
+            _scoreManager.score += 100f;
+            Destroy(gameObject);
+        }
     }
 
     private void OnDrawGizmosSelected()

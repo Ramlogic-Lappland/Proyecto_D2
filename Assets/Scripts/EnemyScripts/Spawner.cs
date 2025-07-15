@@ -27,7 +27,7 @@ public class Spawner : MonoBehaviour
             {
                 SpawnTutorialEnemy();
             }
-            this.enabled = false;
+            this.enabled = false; 
         }
     }
     private void Update()
@@ -47,12 +47,12 @@ public class Spawner : MonoBehaviour
         if (!enemy.agent.isOnNavMesh)
             enemy.agent.Warp(randomSpawnPoint.position);
     }
-
     private void SpawnTutorialEnemy()
     {
         var enemy = Instantiate(enemyPrefab); 
-        enemy.transform.position = spawnPoints[0].position; 
-        enemy.SetPool(null);
+        enemy.transform.position = spawnPoints[0].position;
+        
+        enemy.isTutorialEnemy = true;
         
         if (!enemy.agent.isOnNavMesh)
             enemy.agent.Warp(spawnPoints[0].position);
@@ -61,11 +61,11 @@ public class Spawner : MonoBehaviour
     {
         var enemy = Instantiate(enemyPrefab);
         enemy.SetPool(_enemyPool);
+        enemy.isTutorialEnemy = false; // Mark as poolable enemy
         return enemy;
     }
     private void OnGet(Enemy enemy)
     {
-        
         enemy.gameObject.SetActive(true);
         enemy.health = enemy.maxHealth; 
         enemy.isDead = false;
@@ -79,5 +79,4 @@ public class Spawner : MonoBehaviour
     {
         enemy.gameObject.SetActive(false);
     }
-
 }
