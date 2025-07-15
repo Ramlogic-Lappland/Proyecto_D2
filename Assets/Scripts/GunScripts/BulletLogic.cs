@@ -29,7 +29,6 @@ public class BulletLogic : MonoBehaviour
     {
         SetUp();
     }
-
     private void Update()
     {
         if (_collisions > maxCollisions) Explode();
@@ -37,7 +36,6 @@ public class BulletLogic : MonoBehaviour
         maxLifeTime -= Time.deltaTime;
         if (maxLifeTime <= 0) Explode();
     }
-
     private void Explode()
     {
         if (hitEffect != null) Instantiate(hitEffect, transform.position, Quaternion.identity);
@@ -51,17 +49,19 @@ public class BulletLogic : MonoBehaviour
         
         Destroy(gameObject, 0.5f);
     }
-
-  
-
     private void OnCollisionEnter(Collision collision)
     {
-        
         _collisions++;
-        
-        if (collision.collider.CompareTag("Enemy") && explodeOnCollision) Explode();
+        if (collision.collider.TryGetComponent<Player>(out var player))
+        {
+            player.TakeDamage(bulletDamage);
+            Explode();
+        }
+        else if (collision.collider.CompareTag("Enemy") && explodeOnCollision)
+        {
+            Explode();
+        }
     }
-
     private void SetUp()
     {
         _physicsMaterial = new PhysicsMaterial();
@@ -73,7 +73,4 @@ public class BulletLogic : MonoBehaviour
         
         rb.useGravity = useGravity;
     }
-
-
-
 }

@@ -3,11 +3,15 @@ using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    [Header("enemy prefab")]
+    [Header("Enemy Settings")]
     [SerializeField] private Enemy enemyPrefab;
-    [Header("spawners")]
     [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private float timeBetweenSpawns;
+    [SerializeField] private float timeBetweenSpawns = 5f;
+    
+    [Header("Tutorial Mode")]
+    [SerializeField] private bool isTutorial = false;
+    [SerializeField] private int tutorialEnemyCount = 1;
+    
     private float _timeSinceLastSpawn;
     private IObjectPool<Enemy> _enemyPool;
 
@@ -15,9 +19,53 @@ public class Spawner : MonoBehaviour
     {
         _enemyPool = new ObjectPool<Enemy>(CreateEnemy, OnGet, OnRelease);
     }
+    private void Start()
+    {
+        if (isTutorial)
+        {
+            for (int i = 0; i < tutorialEnemyCount; i++)
+            {
+                SpawnTutorialEnemy();
+            }
+            this.enabled = false;
+        }
+    }
+    private void Update()
+    {
+        if (Time.time > _timeSinceLastSpawn)
+        {
+            SpawnEnemy();
+            _timeSinceLastSpawn = Time.time + timeBetweenSpawns;
+        }
+    }
+    private void SpawnEnemy()
+    {
+        var enemy = _enemyPool.Get();
+        var randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        enemy.transform.position = randomSpawnPoint.position;
+        
+        if (!enemy.agent.isOnNavMesh)
+            enemy.agent.Warp(randomSpawnPoint.position);
+    }
 
+    private void SpawnTutorialEnemy()
+    {
+        var enemy = Instantiate(enemyPrefab); 
+        enemy.transform.position = spawnPoints[0].position; 
+        enemy.SetPool(null);
+        
+        if (!enemy.agent.isOnNavMesh)
+            enemy.agent.Warp(spawnPoints[0].position);
+    }
+    private Enemy CreateEnemy()
+    {
+        var enemy = Instantiate(enemyPrefab);
+        enemy.SetPool(_enemyPool);
+        return enemy;
+    }
     private void OnGet(Enemy enemy)
     {
+        
         enemy.gameObject.SetActive(true);
         enemy.health = enemy.maxHealth; 
         enemy.isDead = false;
@@ -31,18 +79,5 @@ public class Spawner : MonoBehaviour
     {
         enemy.gameObject.SetActive(false);
     }
-    private void Update()
-    {
-        if (Time.time > _timeSinceLastSpawn)
-        {
-            _enemyPool.Get();
-            _timeSinceLastSpawn = Time.time + timeBetweenSpawns;
-        }
-    }
-    private Enemy CreateEnemy()
-    {
-        var enemy = Instantiate(enemyPrefab);
-        enemy.SetPool(_enemyPool);
-        return enemy;
-    }
+
 }

@@ -9,9 +9,6 @@ public class Player : MonoBehaviour
     [SerializeField] private InputActionReference jumpAction;
 
     [Header("Movement Speed/Force Settings & HP")]
-    public HPBarScript hpBar;
-    public int maxHealth = 50;
-    public int health;
     [SerializeField] private float walkSpeed = 12f;
     [SerializeField] private float runSpeed = 18f;
     [SerializeField] private float jumpForce = 5f;
@@ -26,6 +23,7 @@ public class Player : MonoBehaviour
     [SerializeField] private CapsuleCollider playerCapsuleCollider; 
     [SerializeField] private new Rigidbody rigidbody;
     [SerializeField] private Transform playerCapsule;
+    [SerializeField] private HealthBar healthBar;
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle = 45f; 
     [SerializeField] private float slopeClimbForce = 15;
@@ -37,7 +35,6 @@ public class Player : MonoBehaviour
     private bool _isJumpRequested; 
     private bool _isGrounded;
     private bool _readyToJump;
-    private bool _isDead;
     
     /// <summary>
     /// Awake methos sets the base values for some of the player settings
@@ -46,9 +43,6 @@ public class Player : MonoBehaviour
     {
         rigidbody.freezeRotation = true;
         _readyToJump = true;
-        _isDead = false;
-        health = maxHealth;
-        hpBar.SetMaxHealth(maxHealth);
         rigidbody.freezeRotation = true;
         rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -228,21 +222,17 @@ public class Player : MonoBehaviour
     /// <param name="damage"></param>
     public void TakeDamage(int damage)
     {
-        health -= damage;
-        hpBar.SetCurrentHealth(health);
-        if (health <= 0 && !_isDead)
-        {
-            _isDead = true;
-            Debug.unityLogger.Log("Player Died");
-        }
+        Debug.Log($"Player took {damage} damage!");
+        GameManager.GameManagerInstance.PlayerHealth.TakeDamage(damage);
+        healthBar.SetHealth(GameManager.GameManagerInstance.PlayerHealth.Health);
     }
     /// <summary>
     /// heals player
     /// </summary>
     /// <param name="amount"></param>
-    public void Heal(int amount)
+    public void Heal(int healing)
     {
-        health = Mathf.Min(health + amount, maxHealth);
-        hpBar.SetCurrentHealth(health);
+        GameManager.GameManagerInstance.PlayerHealth.Heal(healing);
+        healthBar.SetHealth(GameManager.GameManagerInstance.PlayerHealth.Health);
     }
 }

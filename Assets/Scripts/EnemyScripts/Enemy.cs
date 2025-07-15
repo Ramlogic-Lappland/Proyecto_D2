@@ -101,14 +101,6 @@ public class Enemy : MonoBehaviour
             Debug.LogWarning("Failed to find a valid walk point!");
             _walkPointSet = false;
         }
-        /*
-        var randomX = Random.Range(-walkPointRange, walkPointRange);
-        var randomZ = Random.Range(-walkPointRange, walkPointRange);
-        
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-        
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, defineGround)) _walkPointSet = true;
-        */
     }
 
     private void Chase()

@@ -126,7 +126,7 @@ MonoBehaviour:
   hitEffect: {fileID: 0}
   whatIsEnemy:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 24896
   bounciness: 0
   useGravity: 0
   rangeOfExplosion: 1
