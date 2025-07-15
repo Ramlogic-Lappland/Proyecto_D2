@@ -57,6 +57,13 @@ public class ScenesManager : MonoBehaviour
         SceneManager.LoadScene(Scenes.Tutorial.ToString());
     }
     /// <summary>
+    /// Loads Credits
+    /// </summary>
+    public void LoadCreditsScene()
+    {
+        SceneManager.LoadScene(Scenes.Credits.ToString());
+    }
+    /// <summary>
     /// loads next scene level
     /// </summary>
     public void LoadNextScene()
