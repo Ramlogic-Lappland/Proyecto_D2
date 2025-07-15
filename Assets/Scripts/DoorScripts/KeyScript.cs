@@ -4,6 +4,7 @@ public class KeyScript : MonoBehaviour
 {
     [SerializeField] private GameObject keyObject;
         public int doorID;
+        
         /// <summary>
         /// Interacts with player hitting E to grab the key
         /// </summary>

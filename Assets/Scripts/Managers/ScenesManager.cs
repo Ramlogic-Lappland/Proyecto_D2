@@ -28,7 +28,10 @@ public class ScenesManager : MonoBehaviour
     {
         MainMenu,
         Tutorial,
-        Level01
+        Credits,
+        Controls,
+        Level01,
+        Level02
     }
 
     /// <summary>

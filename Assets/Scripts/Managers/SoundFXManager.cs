@@ -7,7 +7,9 @@ public class SoundFXManager : MonoBehaviour
     public static SoundFXManager Instance;
 
     [SerializeField] private AudioSource soundFXObject;
-
+/// <summary>
+/// Declares a  singleton of this class
+/// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -20,7 +22,12 @@ public class SoundFXManager : MonoBehaviour
             Destroy(gameObject); // Prevents duplicates
         }
     }
-
+/// <summary>
+/// Instantiates a sound effect given 
+/// </summary>
+/// <param name="audioClip"></param>
+/// <param name="spawnTransform"></param>
+/// <param name="volume"></param>
     public void PlaySoundFX(AudioClip audioClip, Transform spawnTransform, float volume)
     {
         var audioSource = Instantiate(soundFXObject, spawnTransform.position, quaternion.identity);
