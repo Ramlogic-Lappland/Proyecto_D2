@@ -20,11 +20,11 @@ TagManager:
   - Proyectile
   - Weapon
   - Interactable
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Wall
+  - Obstacle
+  - Trigger
+  - Ceiling
+  - NoCollision
   - 
   - 
   - 

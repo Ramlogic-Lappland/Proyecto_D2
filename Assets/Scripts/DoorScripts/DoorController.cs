@@ -8,9 +8,7 @@ public class DoorController : MonoBehaviour
     [SerializeField] private float movementInZ;
     [SerializeField] private float movementTime;
 
-    private float _initialPositionX;
-    private float _initialPositionY;
-    private float _initialPositionZ;
+    private Vector3 _initialPosition;
     private NavMeshObstacle _obstacle; 
     private bool _isOpen; 
     public int id;
@@ -21,10 +19,9 @@ public class DoorController : MonoBehaviour
     private void Awake() 
     { 
         _obstacle = GetComponent<NavMeshObstacle>(); 
-        _isOpen = false; 
-        _initialPositionX = gameObject.transform.position.x;
-        _initialPositionY = gameObject.transform.position.y;
-        _initialPositionZ = gameObject.transform.position.z;
+        _isOpen = false;
+        _initialPosition = transform.localPosition;
+
     }
      
     /// <summary>
@@ -60,9 +57,8 @@ public class DoorController : MonoBehaviour
         if (id == this.id)
         {
             ToggleDoor();
-            LeanTween.moveLocalX(gameObject, gameObject.transform.position.x + movementInX, movementTime).setEaseOutQuad();
-            LeanTween.moveLocalY(gameObject, gameObject.transform.position.y + movementInY, movementTime).setEaseOutQuad();
-            LeanTween.moveLocalZ(gameObject, gameObject.transform.position.z +movementInZ, movementTime).setEaseOutQuad();
+            Vector3 targetPos = _initialPosition + new Vector3(movementInX, movementInY, movementInZ);
+            LeanTween.moveLocal(gameObject, targetPos, movementTime).setEaseOutQuad();
         }
     }
     
@@ -74,9 +70,7 @@ public class DoorController : MonoBehaviour
         if (id == this.id)
         {
             ToggleDoor();
-            LeanTween.moveLocalX(gameObject, _initialPositionX, movementTime).setEaseOutQuad();
-            LeanTween.moveLocalY(gameObject, _initialPositionY, movementTime).setEaseOutQuad();
-            LeanTween.moveLocalZ(gameObject, _initialPositionZ, movementTime).setEaseOutQuad();
+            LeanTween.moveLocal(gameObject, _initialPosition, movementTime).setEaseOutQuad();
         }
     }
 
