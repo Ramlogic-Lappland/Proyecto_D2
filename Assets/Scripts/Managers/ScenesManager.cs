@@ -29,7 +29,6 @@ public class ScenesManager : MonoBehaviour
         MainMenu,
         Tutorial,
         Credits,
-        Controls,
         Level01,
         Level02
     }

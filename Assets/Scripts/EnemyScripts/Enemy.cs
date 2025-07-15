@@ -3,6 +3,8 @@ using UnityEngine.AI;
 using UnityEngine.Pool;
 public class Enemy : MonoBehaviour
 {
+    private ScoreManager _scoreManager;
+    
     [Header("Navmesh Settings")]
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] private Transform  player;
@@ -34,6 +36,7 @@ public class Enemy : MonoBehaviour
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
         isDead = false;
+        _scoreManager = GameObject.Find("TutorialCanvas").GetComponent<ScoreManager>();
     }
 
     private void Update()
@@ -147,6 +150,7 @@ public class Enemy : MonoBehaviour
     {
         if (_enemyPool == null)
         {
+            _scoreManager.score += 100f;
             Debug.LogError("EnemyPool is null! Enemy not released.");
             Destroy(gameObject); 
             return;

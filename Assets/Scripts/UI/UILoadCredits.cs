@@ -19,6 +19,6 @@ public class UILoadCredits : MonoBehaviour
 
     private void QuitGame()
     {
-        ScenesManager.Instance.QuitGame();
+        Application.Quit();
     }
 }
