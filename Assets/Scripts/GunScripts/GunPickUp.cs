@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 
 public class GunPickUp : MonoBehaviour
 {
+    
     [Header("Input System Actions")]
     [SerializeField] private InputActionReference dropAction;
     [Header("References")]

@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class ScenesManager : MonoBehaviour
+public class ScenesManager : MonoBehaviour //Scene[S] prevents from calling SceneManager which is from Unity (just in case you wonder) 
 {
     public static ScenesManager Instance { get; private set; }
+    
 
     /// <summary>
     /// declares that the instance of ScenesManager is this one
