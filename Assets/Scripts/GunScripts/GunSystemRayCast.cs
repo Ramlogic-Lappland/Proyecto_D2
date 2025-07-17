@@ -53,7 +53,7 @@ public class GunSystemRayCast : MonoBehaviour
     {
         _bulletsLeft = magazineSize;
         _readyToShoot = true;
-        
+        muzzleFlash.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
         for (var i = 0; i < maxBulletHoles; i++)
         {

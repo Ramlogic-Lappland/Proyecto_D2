@@ -27,7 +27,7 @@ public class GunSystemInstance : MonoBehaviour
     [SerializeField] private GameObject muzzleFlash;
     [SerializeField] private GameObject bulletHole;
     [SerializeField] private GameObject bullet;
-    [SerializeField] private TextMeshPro ammoDisplay;
+    [SerializeField] private TextMeshProUGUI ammoDisplay;
     [Header("Object Pooling")]
     [SerializeField] private int bulletPoolSize = 20;
     [SerializeField] private int maxMuzzleFlashes = 5;
