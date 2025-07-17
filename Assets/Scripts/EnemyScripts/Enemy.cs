@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
         isDead = false;
-        _scoreManager = GameObject.Find("TutorialCanvas").GetComponent<ScoreManager>();
+        _scoreManager = GameObject.Find("InGameUICanvas").GetComponent<ScoreManager>();
     }
 
     private void Update()
