@@ -104,7 +104,7 @@ public class Enemy : MonoBehaviour
         }
         if (!validPoint)
         {
-            Debug.LogWarning("Failed to find a valid walk point!");
+            Debug.Log("Failed to find a valid walk point!");
             _walkPointSet = false;
         }
     }
