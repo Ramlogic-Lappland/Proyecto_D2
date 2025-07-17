@@ -50,6 +50,14 @@ public class PickUpController : MonoBehaviour
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.Euler(Vector3.zero);
         transform.localScale = Vector3.one;
+        Physics.IgnoreCollision(coll, player.GetComponent<Collider>(), true);
+        
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        transform.SetParent(null); 
+        transform.position = gunContainer.position;
+        transform.rotation = gunContainer.rotation;
+        transform.SetParent(gunContainer);
     }
 
     private void Drop()
@@ -69,5 +77,14 @@ public class PickUpController : MonoBehaviour
         
         var random = Random.Range(-1f, 1f);
         rb.AddTorque(new Vector3(random, random, random) * 10);
+        var playerRb = player.GetComponent<Rigidbody>();
+        var playerVelocity = playerRb != null ? playerRb.linearVelocity : Vector3.zero;
+        
+        rb.linearVelocity = playerVelocity * 0.5f; 
+        rb.AddForce(fpsCam.forward * (dropForwardForce * 0.3f), ForceMode.Impulse); 
+        rb.AddForce(fpsCam.up * (dropUpwardForce * 0.2f), ForceMode.Impulse);
+        
+        rb.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 2f);
+        Physics.IgnoreCollision(coll, player.GetComponent<Collider>(), false);
     }
 }

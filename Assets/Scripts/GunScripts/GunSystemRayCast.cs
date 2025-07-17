@@ -215,11 +215,12 @@ public class GunSystemRayCast : MonoBehaviour
         obj.SetActive(false);
         pool.Enqueue(obj);
     }
+    
 
     IEnumerator StartRecoil()
     {
-        Gun.GetComponent<Animator>().Play("PistolRecoil");
-        yield return new WaitForSeconds(0.25f);
-        Gun.GetComponent<Animator>().Play("New State");
+        //Gun.GetComponent<Animator>().Play("PistolRecoil");
+       yield return new WaitForSeconds(0.25f);
+        //Gun.GetComponent<Animator>().Play("New State");
     }
 }

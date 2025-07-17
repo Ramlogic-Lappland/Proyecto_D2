@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
@@ -20,6 +21,8 @@ public class GunPickUp : MonoBehaviour
     [SerializeField] private float pickUpRange;
     [SerializeField] private float dropForwardForce;
     [SerializeField] private float dropUpwardForce;
+    [SerializeField] private float pickupCooldown;
+    private float lastDropTime = -1;
 
     public bool equipped;
     private static bool _slotFull;
@@ -54,8 +57,8 @@ public class GunPickUp : MonoBehaviour
 
     private void Update()
     {
-        var distanceToPlayer = playerTransform.position - playerTransform.position;
-        if (!equipped && distanceToPlayer.magnitude <= pickUpRange && !_slotFull) 
+        var distanceToPlayer = playerTransform.position - transform.position;
+        if (!equipped && distanceToPlayer.magnitude <= pickUpRange && !_slotFull && Time.time - lastDropTime > pickupCooldown) 
             PickUp();
     }
     private void PickUp()
@@ -90,6 +93,7 @@ public class GunPickUp : MonoBehaviour
         rb.AddForce(playerCamera.forward * dropUpwardForce, ForceMode.Impulse);
         var random = Random.Range(-1f, 1f);
         rb.AddTorque(new Vector3(random, random, random) * 4);
+        lastDropTime = Time.time;
         gunScript.enabled = false;
     }
 
