@@ -171,7 +171,7 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (isTutorialEnemy)
         {
-            _scoreManager.score += 100f;
+            _scoreManager.playerScore += 100f;
             Destroy(gameObject);
         }
         else if (_enemyPool != null)
@@ -180,7 +180,7 @@ public class Enemy : MonoBehaviour, IDamageable
         }
         else
         {
-            _scoreManager.score += 100f;
+            _scoreManager.playerScore += 100f;
             Destroy(gameObject);
         }
     }

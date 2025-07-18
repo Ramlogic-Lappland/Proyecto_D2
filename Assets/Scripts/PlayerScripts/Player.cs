@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 public class Player : MonoBehaviour, IDamageable
 {
     [Header("Input System Actions")]
@@ -30,6 +29,9 @@ public class Player : MonoBehaviour, IDamageable
     [Header("Health")]
     [SerializeField] private HealthBar healthBar;
     [SerializeField] private Health healthComponent;
+    [Header("Death Menu")]
+    [SerializeField] private DeathMenuManager deathMenuManager;
+
     
     public bool IsDamageable => healthComponent != null && healthComponent.IsDamageable;
     public int CurrentHealth => healthComponent != null ? healthComponent.CurrentHealth : 0;
@@ -59,7 +61,7 @@ public class Player : MonoBehaviour, IDamageable
         }
         if (healthBar == null)
         {
-            healthBar = FindObjectOfType<HealthBar>();
+            healthBar = FindFirstObjectByType<HealthBar>();
             if (healthBar == null)
                 Debug.LogError("No HealthBar found in scene!", this);
         }
@@ -272,6 +274,18 @@ public class Player : MonoBehaviour, IDamageable
     private void HandleDeath()
     {
         Debug.Log("Player died!");
-        // To do - Add Death handling here
+        if (deathMenuManager == null)
+        {
+            deathMenuManager = FindObjectOfType<DeathMenuManager>();
+        
+            if (deathMenuManager == null)
+            {
+                Debug.LogError("No DeathMenuManager found in scene!", this);
+                return;
+            }
+        }
+        deathMenuManager.ShowDeathMenu();
+        moveAction.action.Disable();
+        jumpAction.action.Disable();
     }
 }

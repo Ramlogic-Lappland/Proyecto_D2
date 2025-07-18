@@ -5,16 +5,16 @@ using TMPro;
 public class ScoreManager : MonoBehaviour
 {
     public TMP_Text scoreText;
-    public float score;
+    public float playerScore;
 
     private void Start()
     {
-        score = 0f;
-        scoreText.text = score.ToString() + " Points";
+        playerScore = 0f;
+        scoreText.text = playerScore.ToString() + " Points";
     }
 
     private void Update()
     {
-        scoreText.text = score.ToString() + " Points";
+        scoreText.text = playerScore.ToString() + " Points";
     }
 }
