@@ -82,5 +82,5 @@ public class DoorController : MonoBehaviour
         GameEventsManager.Instance.OnOpenDoorEventTrigger  -= OpenDoor;
         GameEventsManager.Instance.OnCloseDoorEventTrigger -= CloseDoor;
     }
-    public bool IsOpen => _isOpen;
+    public bool isOpen => _isOpen;
 }

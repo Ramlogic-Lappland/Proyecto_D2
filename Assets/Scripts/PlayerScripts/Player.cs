@@ -28,11 +28,11 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float slopeClimbForce = 15;
     [SerializeField] private float slopeRayLength = 1.5f;
     [Header("Health")]
-    [SerializeField] private Health playerHealth;
     [SerializeField] private HealthBar healthBar;
-
-    public bool IsDamageable => playerHealth.IsDamageable;
-    public int CurrentHealth => playerHealth.CurrentHealth;
+    [SerializeField] private Health healthComponent;
+    
+    public bool IsDamageable => healthComponent != null && healthComponent.IsDamageable;
+    public int CurrentHealth => healthComponent != null ? healthComponent.CurrentHealth : 0;
     
     private Vector2 _moveInput;
     private Vector2 _velocity;
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour, IDamageable
     private bool _readyToJump;
     
     /// <summary>
-    /// Awake methos sets the base values for some of the player settings
+    /// Awake method sets the base values for some of the player settings
     /// </summary>
     private void Awake()
     {
@@ -52,18 +52,24 @@ public class Player : MonoBehaviour, IDamageable
         playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         playerRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         playerRigidbody.sleepThreshold = 0.1f;
-        if (playerHealth == null)
+        if (healthComponent == null)
         {
-            playerHealth = gameObject.AddComponent<Health>();
+            healthComponent = gameObject.AddComponent<Health>();
             Debug.LogWarning("Health component auto-added to Player", this);
         }
-        playerHealth.OnHealthChanged += UpdateHealthUI;
-        playerHealth.OnDeath += HandleDeath;
+        if (healthBar == null)
+        {
+            healthBar = FindObjectOfType<HealthBar>();
+            if (healthBar == null)
+                Debug.LogError("No HealthBar found in scene!", this);
+        }
+        healthComponent.OnHealthChanged += UpdateHealthUI;
+        healthComponent.OnDeath += HandleDeath;
     }
     private void OnDestroy()
     {
-        playerHealth.OnHealthChanged -= UpdateHealthUI;
-        playerHealth.OnDeath -= HandleDeath;
+        healthComponent.OnHealthChanged -= UpdateHealthUI;
+        healthComponent.OnDeath -= HandleDeath;
     }
     
     /// <summary>
@@ -239,9 +245,14 @@ public class Player : MonoBehaviour, IDamageable
     /// <param name="damage"></param>
     public void TakeDamage(int damage)
     {
+        if (healthComponent == null)
+        {
+            Debug.LogError("Missing Health component!", this);
+            return;
+        }
+        healthComponent.TakeDamage(damage);
         Debug.Log($"Player took {damage} damage!");
-        playerHealth?.TakeDamage(damage);
-        healthBar.SetHealth(playerHealth.CurrentHealth);
+        healthBar.SetHealth(healthComponent.CurrentHealth);
     }
     /// <summary>
     /// heals player
@@ -249,13 +260,13 @@ public class Player : MonoBehaviour, IDamageable
     /// <param name="amount"></param>
     public void Heal(int healing)
     {
-        playerHealth?.Heal(healing);
-        healthBar.SetHealth(playerHealth.CurrentHealth);
+        healthComponent?.Heal(healing);
+        healthBar.SetHealth(healthComponent.CurrentHealth);
     }
     
     private void UpdateHealthUI()
     {
-        healthBar.SetHealth(playerHealth.CurrentHealth);
+        healthBar.SetHealth(healthComponent.CurrentHealth);
     }
 
     private void HandleDeath()

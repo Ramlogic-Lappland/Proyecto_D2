@@ -2,17 +2,17 @@ using UnityEngine;
 
 public abstract class DamageHandler : ScriptableObject
 {
-    public abstract void ProcessDamage(IDamageable target, int baseDamage);
+    public abstract void TakeDamage(IDamageable target, int damageAmount, int resistance);
 }
 
 [CreateAssetMenu(menuName = "Damage Handlers/Simple Damage")]
 public class SimpleDamageHandler : DamageHandler
 {
-    public override void ProcessDamage(IDamageable target, int baseDamage)
+    public override void TakeDamage(IDamageable target, int damageAmount, int resistance)
     {
         if (target.IsDamageable)
         {
-            target.TakeDamage(baseDamage);
+            target.TakeDamage(damageAmount);
         }
     }
 }
@@ -22,11 +22,11 @@ public class ResistanceDamageHandler : DamageHandler
 {
     [SerializeField] private float resistanceMultiplier = 0.5f;
     
-    public override void ProcessDamage(IDamageable target, int baseDamage)
+    public override void TakeDamage(IDamageable target, int damageAmount, int resistance)
     {
         if (target.IsDamageable)
         {
-            var reducedDamage = Mathf.RoundToInt(baseDamage * resistanceMultiplier);
+            var reducedDamage = Mathf.RoundToInt(damageAmount * resistanceMultiplier);
             target.TakeDamage(reducedDamage);
         }
     }
@@ -35,7 +35,7 @@ public class ResistanceDamageHandler : DamageHandler
 [CreateAssetMenu(menuName = "Damage Handlers/Invincibility Handler")]
 public class InvincibilityHandler : DamageHandler
 {
-    public override void ProcessDamage(IDamageable target, int baseDamage)
+    public override void TakeDamage(IDamageable target, int damageAmount, int resistance)
     {
         Debug.Log("Target is invincible!");
     }

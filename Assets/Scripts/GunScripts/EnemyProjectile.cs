@@ -11,20 +11,38 @@ public class EnemyProjectile : MonoBehaviour
     {
         Destroy(gameObject, lifetime);
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.CompareTag("Player"))
+        Debug.Log($"Hit: {collision.gameObject.name} (Tag: {collision.gameObject.tag})");
+        if (collision.gameObject.CompareTag("Player"))
         {
-            var damageable = other.GetComponent<IDamageable>();
-            if (damageable != null && damageable.IsDamageable)
+            Debug.Log("Player collision confirmed");
+            var damageable = collision.gameObject.GetComponentInParent<IDamageable>();
+            if (damageable == null)
             {
-                damageable.TakeDamage(damageAmount);
-                Debug.Log($"Projectile hit {other.name} for {damageAmount} damage");
+                Debug.LogError("No IDamageable component found in hierarchy!");
+                return;
             }
-            if (impactEffect != null)
+            Debug.Log($"IsDamageable: {damageable.IsDamageable}");
+        
+            if (damageable.IsDamageable)
             {
-                Instantiate(impactEffect, transform.position, Quaternion.identity);
+                if (damageHandler != null)
+                {
+                    Debug.Log($"Using damage handler: {damageHandler.GetType().Name}");
+                    damageHandler.TakeDamage(damageable, damageAmount, 0);
+                }
+                else
+                {
+                    Debug.Log("Using direct damage");
+                    damageable.TakeDamage(damageAmount);
+                }
             }
+            else
+            {
+                Debug.Log("Player is currently invincible");
+            }
+
             Destroy(gameObject);
         }
     }

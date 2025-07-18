@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 using TMPro;
 
 public class GunSystemRayCast : MonoBehaviour
-{
+{   
     [Header("Input System Actions")]
     [SerializeField] private InputActionReference shoot;
     [SerializeField] private InputActionReference reload;
