@@ -21,7 +21,7 @@ public class Player : MonoBehaviour, IDamageable
     [Header("References")]
     [SerializeField] private Camera playerCam; 
     [SerializeField] private CapsuleCollider playerCapsuleCollider; 
-    [SerializeField] private new Rigidbody rigidbody;
+    [SerializeField] private Rigidbody playerRigidbody; 
     [SerializeField] private Transform playerCapsule;
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle = 45f; 
@@ -46,12 +46,12 @@ public class Player : MonoBehaviour, IDamageable
     /// </summary>
     private void Awake()
     {
-        rigidbody.freezeRotation = true;
+        playerRigidbody.freezeRotation = true;
         _readyToJump = true;
-        rigidbody.freezeRotation = true;
-        rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-        rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rigidbody.sleepThreshold = 0.1f;
+        playerRigidbody.freezeRotation = true;
+        playerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        playerRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        playerRigidbody.sleepThreshold = 0.1f;
         if (playerHealth == null)
         {
             playerHealth = gameObject.AddComponent<Health>();
@@ -159,7 +159,7 @@ public class Player : MonoBehaviour, IDamageable
                     
                     var slopeFactor = Mathf.Sin(slopeAngle * Mathf.Deg2Rad);
                     
-                    rigidbody.AddForce(Vector3.up * slopeFactor * slopeClimbForce, ForceMode.Force);
+                    playerRigidbody.AddForce(Vector3.up * slopeFactor * slopeClimbForce, ForceMode.Force);
                 }
             }
         }
@@ -168,7 +168,7 @@ public class Player : MonoBehaviour, IDamageable
             moveDirection *= airControlMultiplier;
         }
     
-        rigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
+        playerRigidbody.AddForce(moveDirection * targetSpeed, ForceMode.Force);
 
         if (_isJumpRequested && _isGrounded && _readyToJump)
         {
@@ -183,11 +183,11 @@ public class Player : MonoBehaviour, IDamageable
     private void SpeedControl()
     {
         var targetSpeed = _isRunning ? runSpeed : walkSpeed; 
-        var flatVel = new Vector3(rigidbody.linearVelocity.x, 0f, rigidbody.linearVelocity.z);
+        var flatVel = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
         if (flatVel.magnitude > targetSpeed)
         {
             var limitedVelocity = flatVel.normalized * targetSpeed;
-            rigidbody.linearVelocity = new Vector3(limitedVelocity.x, rigidbody.linearVelocity.y, limitedVelocity.z);
+            playerRigidbody.linearVelocity = new Vector3(limitedVelocity.x, playerRigidbody.linearVelocity.y, limitedVelocity.z);
         }
     }
     /// <summary>
@@ -195,8 +195,8 @@ public class Player : MonoBehaviour, IDamageable
     /// </summary>
     private void Jump()
     {
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, 0f, rigidbody.linearVelocity.z);
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        playerRigidbody.linearVelocity = new Vector3(playerRigidbody.linearVelocity.x, 0f, playerRigidbody.linearVelocity.z);
+            playerRigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             
             _isJumpRequested = false;
     }

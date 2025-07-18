@@ -16,25 +16,15 @@ public class EnemyProjectile : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             var damageable = other.GetComponent<IDamageable>();
-            if (damageable != null)
+            if (damageable != null && damageable.IsDamageable)
             {
-                if (damageHandler != null)
-                {
-                    damageHandler.ProcessDamage(damageable, damageAmount);
-                }
-                else
-                {
-                    damageable.TakeDamage(damageAmount);
-                }
+                damageable.TakeDamage(damageAmount);
+                Debug.Log($"Projectile hit {other.name} for {damageAmount} damage");
             }
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
             }
-            Destroy(gameObject);
-        }
-        else if (!other.CompareTag("Enemy"))
-        {
             Destroy(gameObject);
         }
     }
