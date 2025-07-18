@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
     [Header("Input System Actions")]
     [SerializeField] private InputActionReference moveAction;
@@ -23,11 +23,16 @@ public class Player : MonoBehaviour
     [SerializeField] private CapsuleCollider playerCapsuleCollider; 
     [SerializeField] private new Rigidbody rigidbody;
     [SerializeField] private Transform playerCapsule;
-    [SerializeField] private HealthBar healthBar;
     [Header("Slope Handling")]
     [SerializeField] private float maxSlopeAngle = 45f; 
     [SerializeField] private float slopeClimbForce = 15;
     [SerializeField] private float slopeRayLength = 1.5f;
+    [Header("Health")]
+    [SerializeField] private Health playerHealth;
+    [SerializeField] private HealthBar healthBar;
+
+    public bool IsDamageable => playerHealth.IsDamageable;
+    public int CurrentHealth => playerHealth.CurrentHealth;
     
     private Vector2 _moveInput;
     private Vector2 _velocity;
@@ -47,7 +52,20 @@ public class Player : MonoBehaviour
         rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rigidbody.sleepThreshold = 0.1f;
+        if (playerHealth == null)
+        {
+            playerHealth = gameObject.AddComponent<Health>();
+            Debug.LogWarning("Health component auto-added to Player", this);
+        }
+        playerHealth.OnHealthChanged += UpdateHealthUI;
+        playerHealth.OnDeath += HandleDeath;
     }
+    private void OnDestroy()
+    {
+        playerHealth.OnHealthChanged -= UpdateHealthUI;
+        playerHealth.OnDeath -= HandleDeath;
+    }
+    
     /// <summary>
     /// manages the new input system
     /// </summary>
@@ -215,16 +233,15 @@ public class Player : MonoBehaviour
     {
         _isJumpRequested = true; 
     }
-    
     /// <summary>
-    /// Manages player Health when damaged (methos for enemies to access to player health through their respective damage source
+    /// Manages player Health when damaged (methods for enemies to access to player health through their respective damage source
     /// </summary>
     /// <param name="damage"></param>
     public void TakeDamage(int damage)
     {
         Debug.Log($"Player took {damage} damage!");
-        GameManager.GameManagerInstance.PlayerHealth.TakeDamage(damage);
-        healthBar.SetHealth(GameManager.GameManagerInstance.PlayerHealth.Health);
+        playerHealth?.TakeDamage(damage);
+        healthBar.SetHealth(playerHealth.CurrentHealth);
     }
     /// <summary>
     /// heals player
@@ -232,7 +249,18 @@ public class Player : MonoBehaviour
     /// <param name="amount"></param>
     public void Heal(int healing)
     {
-        GameManager.GameManagerInstance.PlayerHealth.Heal(healing);
-        healthBar.SetHealth(GameManager.GameManagerInstance.PlayerHealth.Health);
+        playerHealth?.Heal(healing);
+        healthBar.SetHealth(playerHealth.CurrentHealth);
+    }
+    
+    private void UpdateHealthUI()
+    {
+        healthBar.SetHealth(playerHealth.CurrentHealth);
+    }
+
+    private void HandleDeath()
+    {
+        Debug.Log("Player died!");
+        // To do - Add Death handling here
     }
 }

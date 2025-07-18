@@ -154,7 +154,6 @@ public class GunSystemRayCast : MonoBehaviour
         var x = Random.Range(-spread, spread);
         var y = Random.Range(-spread, spread);
         var direction = playerCamera.transform.forward + new Vector3(x, y, 0);
-    
         if (Physics.Raycast(playerCamera.transform.position, direction, out _rayHit, range, enemyType))
         {
             var hole = GetPooledObject(
@@ -165,16 +164,18 @@ public class GunSystemRayCast : MonoBehaviour
             );
             StartCoroutine(ReturnToPool(hole, _bulletHolePool, bulletHoleLifetime));
         
-            
-            if (_rayHit.collider.CompareTag("Enemy"))
-                _rayHit.collider.GetComponent<Enemy>().TakeDamage(damage);
+            var damageable = _rayHit.collider.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(damage);
+                Debug.Log($"Hit {_rayHit.collider.name} for {damage} damage");
+            }
         }
     }
 
     private void ResetShoot()
     {
         _readyToShoot = true;
-    
         // Auto-fire if still holding trigger
         if (allowButtonHold && _shooting && _bulletsLeft >= bulletsPerTrigger)
         {

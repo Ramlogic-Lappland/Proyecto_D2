@@ -5,6 +5,7 @@ public class EnemyProjectile : MonoBehaviour
     public int damageAmount = 10;
     [SerializeField] private float lifetime = 3f;
     [SerializeField] private GameObject impactEffect;
+    [SerializeField] private DamageHandler damageHandler;
     
     private void Start()
     {
@@ -14,17 +15,22 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            var player = other.GetComponent<Player>();
-            if (player != null)
+            var damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
             {
-                player.TakeDamage(damageAmount);
+                if (damageHandler != null)
+                {
+                    damageHandler.ProcessDamage(damageable, damageAmount);
+                }
+                else
+                {
+                    damageable.TakeDamage(damageAmount);
+                }
             }
-            
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
             }
-            
             Destroy(gameObject);
         }
         else if (!other.CompareTag("Enemy"))

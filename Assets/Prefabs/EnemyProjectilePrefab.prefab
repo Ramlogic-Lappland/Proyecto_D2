@@ -153,6 +153,7 @@ MonoBehaviour:
   damageAmount: 10
   lifetime: 5
   impactEffect: {fileID: 8762405910555896786, guid: fcb74f28d107e284e80af037bfec14ca, type: 3}
+  damageHandler: {fileID: 11400000, guid: bd6093b2e4be36342a2d5a2be04d7a5f, type: 2}
 --- !u!1001 &2941825665991056545
 PrefabInstance:
   m_ObjectHideFlags: 0
