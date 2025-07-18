@@ -8,7 +8,6 @@ public class MusicPlayer : MonoBehaviour
     [SerializeField] private MusicType menuMusic = MusicType.MAIN_MENU;
     [SerializeField] private MusicType gameMusic = MusicType.LEVEL_1;
     [SerializeField] private MusicType bossMusic = MusicType.BOSS_FIGHT;
-    [SerializeField] private MusicType creditsMusic = MusicType.MAIN_MENU;
     [SerializeField] private float fadeDuration = 1f;
 
     private static MusicPlayer _instance;
@@ -46,6 +45,8 @@ public class MusicPlayer : MonoBehaviour
             case "MainMenu":
                 SoundManager.PlayMusic(menuMusic, fadeDuration);
                 break;
+            case "Credits":
+                break;
                 
             case "Tutorial":
                 SoundManager.PlayMusic(gameMusic, fadeDuration);
@@ -57,9 +58,7 @@ public class MusicPlayer : MonoBehaviour
                 SoundManager.PlayMusic(bossMusic, fadeDuration);
                 break;
                 
-            case "Credits":
-                SoundManager.PlayMusic(creditsMusic, fadeDuration);
-                break;
+ 
         }
     }
     void OnDestroy()

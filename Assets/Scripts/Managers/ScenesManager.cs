@@ -46,13 +46,21 @@ public class ScenesManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            if (persistentObjects == null)
+            {
+                persistentObjects = new GameObject("PersistentObjects");
+                persistentObjects.transform.SetParent(transform);
+                Debug.LogWarning("Automatically created PersistentObjects parent", this);
+            }
+        
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(persistentObjects);
         }
         else
         {
             Destroy(gameObject);
-            Destroy(persistentObjects);
+            if (persistentObjects != null && persistentObjects.name == "PersistentObjects")
+                Destroy(persistentObjects);
         }
     }
 
