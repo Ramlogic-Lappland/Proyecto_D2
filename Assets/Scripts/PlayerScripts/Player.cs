@@ -252,6 +252,7 @@ public class Player : MonoBehaviour, IDamageable
             Debug.LogError("Missing Health component!", this);
             return;
         }
+        SoundManager.PlaySound(SoundType.HURT);
         healthComponent.TakeDamage(damage);
         Debug.Log($"Player took {damage} damage!");
         healthBar.SetHealth(healthComponent.CurrentHealth);

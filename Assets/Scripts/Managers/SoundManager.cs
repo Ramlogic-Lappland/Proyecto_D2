@@ -1,49 +1,49 @@
+using System;
 using UnityEngine;
+using UnityEngine.Audio;
 
-public enum SoundType
-{
-    PISTOL,
-    SHOTGUN,
-    RELOAD,
-    WALK,
-    HURT,
-    DOOR,
-    UICLICK,
-    UIHOVER,
-    ALERT,
-    MUSIC1,
-    MUSIC2
-}
-[RequireComponent(typeof(AudioSource))]
-public class SoundManager : MonoBehaviour
-{
-
-    [SerializeField] private AudioClip[] soundList;
-    private AudioSource audioSource;
-    private static SoundManager Instance;
-    /// <summary>
-    /// declares that the instance of SoundManager is this one
-    /// </summary>
-    private void Awake() // Singleton
+    [RequireComponent(typeof(AudioSource))]
+    public class SoundManager : MonoBehaviour
     {
-        if (Instance == null)
+        [SerializeField] private SoundsSO SO;
+        private static SoundManager instance = null;
+        private AudioSource audioSource;
+
+        private void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            if(!instance)
+            {
+                instance = this;
+                audioSource = GetComponent<AudioSource>();
+            }
         }
-        else
+
+        public static void PlaySound(SoundType sound, AudioSource source = null, float volume = 1)
         {
-            Destroy(gameObject);
+            SoundList soundList = instance.SO.sounds[(int)sound];
+            AudioClip[] clips = soundList.sounds;
+            AudioClip randomClip = clips[UnityEngine.Random.Range(0, clips.Length)];
+
+            if(source)
+            {
+                source.outputAudioMixerGroup = soundList.mixer;
+                source.clip = randomClip;
+                source.volume = volume * soundList.volume;
+                source.Play();
+            }
+            else
+            {
+                instance.audioSource.outputAudioMixerGroup = soundList.mixer;
+                instance.audioSource.PlayOneShot(randomClip, volume * soundList.volume);
+            }
         }
     }
 
-    private void Start()
+    [Serializable]
+    public struct SoundList
     {
-        audioSource = GetComponent<AudioSource>();
+        [HideInInspector] public string name;
+        [Range(0, 1)] public float volume;
+        public AudioMixerGroup mixer;
+        public AudioClip[] sounds;
     }
-
-    public static void PlaySound(SoundType soundType, float volume = 1)
-    {
-        Instance.audioSource.PlayOneShot(Instance.soundList[(int)soundType], volume);
-    }
-}
