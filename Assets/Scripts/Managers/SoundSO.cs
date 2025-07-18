@@ -1,8 +1,7 @@
 using UnityEngine;
 
-
-    [CreateAssetMenu(menuName = "Small Hedge/Sounds SO", fileName = "Sounds SO")]
-    public class SoundsSO : ScriptableObject
-    {
-        public SoundList[] sounds;
-    }
+[CreateAssetMenu(fileName = "SoundEffectsSO", menuName = "Audio/Sound Effects")]
+public class SoundsSO : ScriptableObject
+{
+    public SoundList[] sounds;
+}

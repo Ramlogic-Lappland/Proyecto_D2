@@ -151,9 +151,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 10
-  lifetime: 5
+  lifetime: 2
   impactEffect: {fileID: 8762405910555896786, guid: fcb74f28d107e284e80af037bfec14ca, type: 3}
-  damageHandler: {fileID: 11400000, guid: 2f0083debb10c3b4bbffd69b0e9567f5, type: 2}
+  damageHandler: {fileID: 0}
 --- !u!1001 &2941825665991056545
 PrefabInstance:
   m_ObjectHideFlags: 0

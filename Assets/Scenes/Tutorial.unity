@@ -4684,19 +4684,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715175a039c9f464dbeea8842d1c014f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundList:
-  - {fileID: 8300000, guid: fdb21f2ef0b7844499722ddc9caa5636, type: 3}
-  - {fileID: 8300000, guid: c343474bc8f549a44a54b0f1523d08a7, type: 3}
-  - {fileID: 8300000, guid: b62efdf768b8a7043a2287c9ed662435, type: 3}
-  - {fileID: 8300000, guid: fa1762093d063e94fbfb506306db9d80, type: 3}
-  - {fileID: 8300000, guid: 8aff756b9a5de654087e735658468e51, type: 3}
-  - {fileID: 8300000, guid: 6e51d94ee8b1070458645047cb3777ef, type: 3}
-  - {fileID: 8300000, guid: 58b960ad75214c3409de9d41583f155a, type: 3}
-  - {fileID: 8300000, guid: 8d82daec9a49abf42997bbbd35db38a6, type: 3}
-  - {fileID: 8300000, guid: 58b960ad75214c3409de9d41583f155a, type: 3}
-  - {fileID: 8300000, guid: 78dfa815c2bbd294298ac04b25798229, type: 3}
-  - {fileID: 8300000, guid: ef1a618bf721d984b85deede879191dc, type: 3}
-  - {fileID: 8300000, guid: 62a71a0cfc6a20344ac5a5b642f116e0, type: 3}
+  soundEffectsSO: {fileID: 11400000, guid: 2bedff21b36a1914ba90dc040771203b, type: 2}
+  musicTracksSO: {fileID: 11400000, guid: 8c7a87f5a294adb4cb7cf6b5fcc79130, type: 2}
+  soundEffectsSource: {fileID: 0}
+  musicSource: {fileID: 0}
 --- !u!82 &493944991
 AudioSource:
   m_ObjectHideFlags: 0

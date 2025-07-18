@@ -10,6 +10,11 @@
         UICLICK,
         UIHOVER,
         ALERT,
-        MUSIC1,
-        MUSIC2
+    }
+    
+    public enum MusicType
+    {
+        MAIN_MENU,
+        LEVEL_1,
+        BOSS_FIGHT,
     }
