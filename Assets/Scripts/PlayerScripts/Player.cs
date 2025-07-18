@@ -288,4 +288,44 @@ public class Player : MonoBehaviour, IDamageable
         moveAction.action.Disable();
         jumpAction.action.Disable();
     }
+    
+    /// <summary>
+    /// Code below manages the respawn mechanic assignation of setting or in case of spawning in the map the spawn itself
+    /// </summary>
+    public void ResetPlayerState()
+    {
+        // Reset movement state
+        _moveInput = Vector2.zero;
+        _isRunning = false;
+        _isJumpRequested = false;
+        _readyToJump = true;
+    
+        // Reset physics if needed
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.linearVelocity = Vector3.zero;
+            playerRigidbody.angularVelocity = Vector3.zero;
+        }
+    }
+    public void EnableInputActions()
+    {
+        // Re-enable all input actions
+        moveAction.action.Enable();
+        runAction.action.Enable();
+        jumpAction.action.Enable();
+    }
+    public void DisableInputActions()
+    {
+        // Disable all input actions
+        moveAction.action.Disable();
+        runAction.action.Disable();
+        jumpAction.action.Disable();
+    }
+    public void PrepareForSceneTransition()
+    {
+        GetComponent<PlayerInput>().enabled = false;
+        
+        _moveInput = Vector2.zero;
+        _isJumpRequested = false;
+    }
 }

@@ -14,16 +14,7 @@ public class UIMainMenu : MonoBehaviour
     private void Start()
     {
         creditsButton.onClick.AddListener(LoadCredits);
-        startGameButton.onClick.AddListener(StartNewGame);
         quitButton.onClick.AddListener(QuitGame);
-    }
-
-    /// <summary>
-    /// loads first game scene (tutorial) through Scene Manager
-    /// </summary>
-    private void StartNewGame()
-    {
-        ScenesManager.Instance.LoadNewGame();
     }
     /// <summary>
     /// load Credits through Scene Manager
