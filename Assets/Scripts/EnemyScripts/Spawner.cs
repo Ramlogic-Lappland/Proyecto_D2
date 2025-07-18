@@ -7,7 +7,6 @@ public class Spawner : MonoBehaviour
     [SerializeField] private Enemy enemyPrefab;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private float timeBetweenSpawns = 5f;
-    [SerializeField] private int enemyMaxHealth = 100;
     
     [Header("Tutorial Mode")]
     [SerializeField] private bool isTutorial = false;
@@ -62,27 +61,17 @@ public class Spawner : MonoBehaviour
     {
         var enemy = Instantiate(enemyPrefab);
         enemy.SetPool(_enemyPool);
-        enemy.isTutorialEnemy = false;
-        
-        var health = enemy.GetComponent<Health>();
-        if (health == null)
-            health = enemy.gameObject.AddComponent<Health>();
-        
-        health.Initialize(enemyMaxHealth);
+        enemy.isTutorialEnemy = false; // Mark as poolable enemy
         return enemy;
     }
     private void OnGet(Enemy enemy)
     {
         enemy.gameObject.SetActive(true);
+        enemy.health = enemy.maxHealth; 
         enemy.isDead = false;
-        
-        // Reset health
-        var health = enemy.GetComponent<Health>();
-        health?.Initialize(enemyMaxHealth);
         
         var randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         enemy.transform.position = randomSpawnPoint.position;
-        
         if (!enemy.agent.isOnNavMesh)
             enemy.agent.Warp(randomSpawnPoint.position);
     }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
-public class Enemy : MonoBehaviour, IDamageable
+public class Enemy : MonoBehaviour
 {
     private ScoreManager _scoreManager;
     
@@ -19,12 +19,8 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private GameObject projectile;
     [SerializeField] private int enemyDamage;
     [Header("Enemy Health")]
-    [SerializeField] public Health health;
-    [SerializeField] private int _maxHealth;
-    public Health Health { get; private set; }
-    public bool IsDamageable => !isDead;
-    public int CurrentHealth => health.CurrentHealth; 
-    
+    [SerializeField] public int health;
+    [SerializeField] public int maxHealth;
     private bool _playerIsInAttackRange, _playerIsInSightRange, _alreadyAttacked, _walkPointSet;
     public bool isDead = false;
     private IObjectPool<Enemy> _enemyPool;
@@ -46,9 +42,6 @@ public class Enemy : MonoBehaviour, IDamageable
         player = GameObject.Find("PlayerCapsule").transform;
         agent = GetComponent<NavMeshAgent>();
         isDead = false;
-        Health = GetComponent<Health>();
-        if (Health == null)
-            Health = gameObject.AddComponent<Health>();
         _scoreManager = GameObject.Find("InGameUICanvas").GetComponent<ScoreManager>();
     }
 
@@ -156,11 +149,10 @@ public class Enemy : MonoBehaviour, IDamageable
         _alreadyAttacked = false;
     }
     
-    void IDamageable.TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
-        if (isDead) return;
-        Health?.TakeDamage(damage);
-        if (Health.CurrentHealth <= 0)
+        health -= damage;
+        if (health <= 0 && !isDead)
         {
             isDead = true;
             DestroyEnemy();
