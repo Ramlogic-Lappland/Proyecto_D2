@@ -277,7 +277,6 @@ public class Player : MonoBehaviour, IDamageable
         if (deathMenuManager == null)
         {
             deathMenuManager = FindObjectOfType<DeathMenuManager>();
-        
             if (deathMenuManager == null)
             {
                 Debug.LogError("No DeathMenuManager found in scene!", this);

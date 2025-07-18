@@ -58,6 +58,7 @@ public class DoorController : MonoBehaviour
         {
             ToggleDoor();
             Vector3 targetPos = _initialPosition + new Vector3(movementInX, movementInY, movementInZ);
+            SoundManager.PlaySound(SoundType.DOOR);
             LeanTween.moveLocal(gameObject, targetPos, movementTime).setEaseOutQuad();
         }
     }
@@ -70,6 +71,7 @@ public class DoorController : MonoBehaviour
         if (id == this.id)
         {
             ToggleDoor();
+            SoundManager.PlaySound(SoundType.DOOR);
             LeanTween.moveLocal(gameObject, _initialPosition, movementTime).setEaseOutQuad();
         }
     }

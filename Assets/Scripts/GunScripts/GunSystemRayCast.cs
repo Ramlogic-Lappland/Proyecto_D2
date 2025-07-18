@@ -118,6 +118,7 @@ public class GunSystemRayCast : MonoBehaviour
     {
         if (_bulletsLeft < magazineSize && !_reloading)
         {
+            SoundManager.PlaySound(SoundType.RELOAD);
             Reload();
         }
     }
@@ -137,6 +138,7 @@ public class GunSystemRayCast : MonoBehaviour
         var flash = GetPooledObject(_muzzleFlashPool, muzzleFlash, attackPoint.position, Quaternion.identity);
         StartCoroutine(ReturnToPool(flash, _muzzleFlashPool, muzzleFlashLifetime));
         StartCoroutine(StartRecoil());
+        SoundManager.PlaySound(SoundType.PISTOL);
     
         // Fire all pellets at once
         for (int i = 0; i < bulletsPerTrigger; i++)
